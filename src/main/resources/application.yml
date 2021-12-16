@@ -5,12 +5,12 @@ server:
     include-stacktrace: never
 #  port: 8080
   servlet:
-    context-path: /insurance/api
+    context-path: /healthcare-services/api
 
 spring:
   datasource:
     password: password
-    url: jdbc:postgresql://localhost:5432/insurance
+    url: jdbc:postgresql://localhost:5432/healthcareservices
     username: postgres
   jpa:
     hibernate:
@@ -48,5 +48,5 @@ spring:
 
 backendapi:
   app:
-    jwtSecret: insuranceSecretKey
+    jwtSecret: healthcareServicesSecretKey
     jwtExpirationMs: 86400000
