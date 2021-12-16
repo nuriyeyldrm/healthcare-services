@@ -1,5 +1,5 @@
 package com.backend.insurance.domain.enumeration;
 
 public enum UserRole {
-    ADMIN, DOCTOR, CUSTOMER
+    ROLE_ADMIN, ROLE_DOCTOR, ROLE_CUSTOMER
 }

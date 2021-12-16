@@ -3,18 +3,18 @@ server:
     include-message: always
     include-binding-errors: always
     include-stacktrace: never
-  port: 8080
+#  port: 8080
   servlet:
     context-path: /insurance/api
 
 spring:
   datasource:
     password: password
-    url: jdbc:postgresql://localhost:5432/insurancedb
+    url: jdbc:postgresql://localhost:5432/insurance
     username: postgres
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
