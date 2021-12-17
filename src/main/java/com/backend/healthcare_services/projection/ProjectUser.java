@@ -20,5 +20,9 @@ public interface ProjectUser {
 
     Set<String> getRoles();
 
+    Integer getAge();
+
+    String getGender();
+
     Boolean getBuiltIn();
 }

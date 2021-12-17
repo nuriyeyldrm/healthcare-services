@@ -54,35 +54,37 @@ public class UserService {
                 .orElseThrow(() -> new ResourceNotFoundException(String.format(USER_NOT_FOUND_MSG, id)));
 
         UserDTO userDTO = new UserDTO();
-        userDTO.setRoles(user.getRole());
+        userDTO.setRole(user.getRole());
 
         return new UserDTO(user.getFirstName(), user.getLastName(), user.getPhoneNumber(), user.getEmail(),
-                user.getAddress(), user.getZipCode(), userDTO.getRoles(), user.getBuiltIn());
+                user.getAddress(), user.getZipCode(), userDTO.getRoles(), user.getAge(),
+                user.getGender(), user.getBuiltIn());
     }
 
-    public void register(User user) throws BadRequestException {
+    public void register(AdminDTO adminDTO) throws BadRequestException {
 
-        boolean isValidEmail = emailValidator.test(user.getEmail());
+        boolean isValidEmail = emailValidator.test(adminDTO.getEmail());
 
         if (!isValidEmail){
             throw new IllegalStateException("email not valid");
         }
 
-        if (userRepository.existsByEmail(user.getEmail())) {
+        if (userRepository.existsByEmail(adminDTO.getEmail())) {
             throw new ConflictException("Error: Email is already in use!");
         }
 
-        String encodedPassword = passwordEncoder.encode(user.getPassword());
+        if (adminDTO.getPassword() == null) {
+            throw new BadRequestException("Please enter password");
+        }
 
-        user.setPassword(encodedPassword);
-        user.setBuiltIn(false);
+        String encodedPassword = passwordEncoder.encode(adminDTO.getPassword());
 
-        Set<Role> roles = new HashSet<>();
-        Role customerRole = roleRepository.findByName(UserRole.ROLE_CUSTOMER)
-                .orElseThrow(() -> new ResourceNotFoundException("Error: Role is not found."));
-        roles.add(customerRole);
+        Set<Role> roles = addRoles(adminDTO.getRoles());
 
-        user.setRoles(roles);
+        User user = new User(adminDTO.getFirstName(), adminDTO.getLastName(), encodedPassword,
+                adminDTO.getPhoneNumber(), adminDTO.getEmail(), adminDTO.getAddress(), adminDTO.getZipCode(),
+                roles, adminDTO.getAge(), adminDTO.getGender());
+
         userRepository.save(user);
 
         String token = UUID.randomUUID().toString();
@@ -136,21 +138,58 @@ public class UserService {
         }
     }
 
-    public void updateUser(Long id, UserDTO userDao) throws BadRequestException {
+    public String updateUser(Long id, UserDTO userDTO) throws BadRequestException {
 
-        boolean emailExists = userRepository.existsByEmail(userDao.getEmail());
+        boolean emailExists = userRepository.existsByEmail(userDTO.getEmail());
         Optional<User> userDetails = userRepository.findById(id);
+        ConfirmationToken confirmation = confirmationTokenRepository.findByUsers(userDetails.get());
 
         if (userDetails.get().getBuiltIn()){
             throw new ResourceNotFoundException("You dont have permission to update user info!");
         }
 
-        if (emailExists && !userDao.getEmail().equals(userDetails.get().getEmail())){
+        if (emailExists && !userDTO.getEmail().equals(userDetails.get().getEmail())){
             throw new ConflictException("Error: Email is already in use!");
         }
 
-        userRepository.update(id, userDao.getFirstName(), userDao.getLastName(), userDao.getPhoneNumber(),
-                userDao.getEmail(), userDao.getAddress(), userDao.getZipCode());
+        Set<String> userRoles = userDTO.getRoles();
+        Set<Role> roles = addRoles(userRoles);
+
+        if (userDTO.getEmail().equals(userDetails.get().getEmail())) {
+
+            userDetails.get().setFirstName(userDTO.getFirstName());
+            userDetails.get().setLastName(userDTO.getLastName());
+            userDetails.get().setPhoneNumber(userDTO.getPhoneNumber());
+            userDetails.get().setAddress(userDTO.getAddress());
+            userDetails.get().setZipCode(userDTO.getZipCode());
+            userDetails.get().setRoles(roles);
+            userDetails.get().setAge(userDTO.getAge());
+            userDetails.get().setGender(userDTO.getGender());
+
+            userRepository.save(userDetails.get());
+            return "Updated successfully!";
+        }
+
+        else {
+            User user = new User(id, userDTO.getFirstName(), userDTO.getLastName(), userDetails.get().getPassword(),
+                    userDTO.getPhoneNumber(), userDTO.getEmail(), userDTO.getAddress(), userDTO.getZipCode(), roles,
+                    userDTO.getAge(), userDTO.getGender());
+
+            userRepository.save(user);
+
+            String token = UUID.randomUUID().toString();
+
+            ConfirmationToken confirmationToken = new ConfirmationToken(confirmation.getId(), token,
+                    LocalDateTime.now(), LocalDateTime.now().plusMinutes(15), user);
+
+            confirmationTokenService.saveConfirmationToken(confirmationToken);
+
+            String link = "http://localhost:8080/healthcare-services/api/user/confirm?token=" + token;
+
+            emailSender.send(user.getEmail(), buildEmail(user.getFirstName(), link));
+            return "Updated successfully! Please confirm your email!";
+        }
+
     }
 
     public void updateUserAuth(Long id, AdminDTO adminDTO) throws BadRequestException {
@@ -161,8 +200,6 @@ public class UserService {
         if (userDetails.get().getBuiltIn()){
             throw new ResourceNotFoundException("You dont have permission to update user info!");
         }
-
-        adminDTO.setBuiltIn(false);
 
         if (emailExists && !adminDTO.getEmail().equals(userDetails.get().getEmail())){
             throw new ConflictException("Error: Email is already in use!");
@@ -182,7 +219,9 @@ public class UserService {
 
         User user = new User(id, adminDTO.getFirstName(), adminDTO.getLastName(), adminDTO.getPassword(),
                 adminDTO.getPhoneNumber(), adminDTO.getEmail(), adminDTO.getAddress(), adminDTO.getZipCode(),
-                roles, adminDTO.getBuiltIn());
+                roles, adminDTO.getAge(), adminDTO.getGender());
+
+        user.setEnabled(true);
 
         userRepository.save(user);
     }
@@ -220,9 +259,9 @@ public class UserService {
         Set<Role> roles = new HashSet<>();
 
         if (userRoles == null) {
-            Role userRole = roleRepository.findByName(UserRole.ROLE_CUSTOMER)
+            Role patientRole = roleRepository.findByName(UserRole.ROLE_PATIENT)
                     .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-            roles.add(userRole);
+            roles.add(patientRole);
         } else {
             userRoles.forEach(role -> {
                 switch (role) {
@@ -233,15 +272,27 @@ public class UserService {
 
                         break;
                     case "Doctor":
-                        Role customerServiceRole = roleRepository.findByName(UserRole.ROLE_DOCTOR)
+                        Role doctorRole = roleRepository.findByName(UserRole.ROLE_DOCTOR)
                                 .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                        roles.add(customerServiceRole);
+                        roles.add(doctorRole);
+
+                        break;
+                    case "Nurse":
+                        Role nurseRole = roleRepository.findByName(UserRole.ROLE_NURSE)
+                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                        roles.add(nurseRole);
+
+                        break;
+                    case "Secretary":
+                        Role secretaryRole = roleRepository.findByName(UserRole.ROLE_SECRETARY)
+                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                        roles.add(secretaryRole);
 
                         break;
                     default:
-                        Role userRole = roleRepository.findByName(UserRole.ROLE_CUSTOMER)
+                        Role patientRole = roleRepository.findByName(UserRole.ROLE_PATIENT)
                                 .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                        roles.add(userRole);
+                        roles.add(patientRole);
                 }
             });
         }

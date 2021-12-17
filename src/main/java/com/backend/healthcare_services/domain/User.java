@@ -1,6 +1,7 @@
 package com.backend.healthcare_services.domain;
 
 import com.backend.healthcare_services.domain.enumeration.UserRole;
+import io.dropwizard.validation.OneOf;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -71,15 +72,41 @@ public class User implements Serializable {
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
 
+    @NotNull(message = "Please enter your age")
     @Column(nullable = false)
-    private Boolean builtIn;
+    private Integer age;
 
+    @Size(max = 6)
+    @NotNull(message = "Please enter your gender that should be Female or Male")
+    @OneOf(value = {"Female", "Male"}, ignoreCase = true, ignoreWhitespace = true)
+    @Column(nullable = false, length = 6)
+    private String gender;
+
+    @Column(nullable = false)
+    private Boolean builtIn = false;
+
+    @Column(nullable = false)
     private Boolean locked = false;
 
+    @Column(nullable = false)
     private Boolean enabled = false;
 
+    public User(String firstName, String lastName, String password, String phoneNumber, String email, String address,
+                String zipCode, Set<Role> roles, Integer age, String gender) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.password = password;
+        this.phoneNumber = phoneNumber;
+        this.email = email;
+        this.address = address;
+        this.zipCode = zipCode;
+        this.roles = roles;
+        this.age = age;
+        this.gender = gender;
+    }
+
     public User(Long id, String firstName, String lastName, String password, String phoneNumber, String email,
-                String address, String zipCode, Set<Role> roles, Boolean builtIn) {
+                String address, String zipCode, Set<Role> roles, Integer age, String gender) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -89,12 +116,41 @@ public class User implements Serializable {
         this.address = address;
         this.zipCode = zipCode;
         this.roles = roles;
-        this.builtIn = builtIn;
+        this.age = age;
+        this.gender = gender;
+    }
+
+    public User(Long id, String firstName, String lastName, String phoneNumber, String email, String address,
+                String zipCode, Set<Role> roles, Integer age, String gender) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.phoneNumber = phoneNumber;
+        this.email = email;
+        this.address = address;
+        this.zipCode = zipCode;
+        this.roles = roles;
+        this.age = age;
+        this.gender = gender;
+    }
+
+    public User(Long id, String firstName, String lastName, String phoneNumber, String address, String zipCode,
+                Set<Role> roles, Integer age, String gender) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.phoneNumber = phoneNumber;
+        this.address = address;
+        this.zipCode = zipCode;
+        this.roles = roles;
+        this.age = age;
+        this.gender = gender;
     }
 
     public Set<Role> getRole() {
         return roles;
     }
+
 
     public Set<String> getRoles() {
         Set<String> roles1 = new HashSet<>();

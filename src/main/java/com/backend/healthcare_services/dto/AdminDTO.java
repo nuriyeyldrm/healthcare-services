@@ -49,5 +49,9 @@ public class AdminDTO {
 
     private Set<String> roles;
 
+    private Integer age;
+
+    private String gender;
+
     private Boolean builtIn;
 }

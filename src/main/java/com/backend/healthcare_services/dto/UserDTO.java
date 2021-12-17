@@ -53,10 +53,14 @@ public class UserDTO {
 
     private Set<String> roles;
 
+    private Integer age;
+
+    private String gender;
+
     private Boolean builtIn;
 
     public UserDTO(String firstName, String lastName, String phoneNumber, String email,
-                   String address, String zipCode, Set<String> roles, Boolean builtIn) {
+                   String address, String zipCode, Set<String> roles, Integer age, String gender, Boolean builtIn) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.phoneNumber = phoneNumber;
@@ -64,10 +68,12 @@ public class UserDTO {
         this.address = address;
         this.zipCode = zipCode;
         this.roles = roles;
+        this.age = age;
+        this.gender = gender;
         this.builtIn = builtIn;
     }
 
-    public void setRoles(Set<Role> roles) {
+    public void setRole(Set<Role> roles) {
         Set<String> roles1 = new HashSet<>();
         Role[] role = roles.toArray(new Role[roles.size()]);
 
@@ -75,7 +81,7 @@ public class UserDTO {
             if (role[i].getName().equals(UserRole.ROLE_ADMIN))
                 roles1.add("Administrator");
             else
-                roles1.add("Customer");
+                roles1.add("Patient");
         }
 
         this.roles = roles1;

@@ -1,6 +1,5 @@
 package com.backend.healthcare_services.controller;
 
-import com.backend.healthcare_services.domain.User;
 import com.backend.healthcare_services.dto.AdminDTO;
 import com.backend.healthcare_services.dto.UserDTO;
 import com.backend.healthcare_services.projection.ProjectUser;
@@ -52,7 +51,8 @@ public class UserController {
     }
 
     @GetMapping("/user")
-    @PreAuthorize("hasRole('CUSTOMER') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('PATIENT') or hasRole('ADMIN') or hasRole('SECRETARY')" +
+            " or hasRole('NURSE') or hasRole('DOCTOR')")
     public ResponseEntity<UserDTO> getUserById(HttpServletRequest request){
         Long id = (Long) request.getAttribute("id");
         UserDTO userDao = userService.findById(id);
@@ -60,11 +60,11 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<Map<String, Boolean>> registerUser(@Valid @RequestBody User user) {
+    public ResponseEntity<Map<String, Boolean>> registerUser(@Valid @RequestBody AdminDTO user) {
         userService.register(user);
 
         Map<String, Boolean> map = new HashMap<>();
-        map.put("User registered successfully!", true);
+        map.put("Registered successfully! Please confirm your email!", true);
         return new ResponseEntity<>(map, HttpStatus.CREATED);
     }
 
@@ -92,13 +92,14 @@ public class UserController {
     }
 
     @PutMapping("/user")
-    @PreAuthorize("hasRole('CUSTOMER') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('PATIENT') or hasRole('ADMIN') or hasRole('SECRETARY') or " +
+            "hasRole('NURSE') or hasRole('DOCTOR')")
     public ResponseEntity<Map<String, Boolean>> updateUser(HttpServletRequest request,
-                                                           @Valid @RequestBody UserDTO userDao) {
+                                                           @Valid @RequestBody UserDTO userDTO) {
         Long id = (Long) request.getAttribute("id");
-        userService.updateUser(id, userDao);
+        String message = userService.updateUser(id, userDTO);
         Map<String, Boolean> map = new HashMap<>();
-        map.put("success", true);
+        map.put(message, true);
         return new ResponseEntity<>(map, HttpStatus.OK);
     }
 
@@ -113,7 +114,8 @@ public class UserController {
     }
 
     @PatchMapping("/user/password")
-    @PreAuthorize("hasRole('CUSTOMER') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('PATIENT') or hasRole('ADMIN') or hasRole('SECRETARY') or " +
+            "hasRole('NURSE') or hasRole('DOCTOR')")
     public ResponseEntity<Map<String, Boolean>> updatePassword(HttpServletRequest request,
                                                                @RequestBody Map<String, Object> userMap) {
         Long id = (Long) request.getAttribute("id");
