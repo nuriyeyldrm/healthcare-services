@@ -35,7 +35,14 @@ public class PatientController {
         return new ResponseEntity<>(patient, HttpStatus.OK);
     }
 
-    @GetMapping()
+    @GetMapping("/{id}/auth")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SECRETARY') or hasRole('NURSE') or hasRole('DOCTOR')")
+    public ResponseEntity<PatientDTO> getPatientByIdOrUserId(@PathVariable Long id){
+        PatientDTO patient = patientService.findByIdAuth(id);
+        return new ResponseEntity<>(patient, HttpStatus.OK);
+    }
+
+    @GetMapping("/all")
     @PreAuthorize("hasRole('ADMIN') or hasRole('SECRETARY') or hasRole('NURSE') or hasRole('DOCTOR')")
     public ResponseEntity<List<PatientDTO>> getAllPatient(){
         List<PatientDTO> patients = patientService.findAll();

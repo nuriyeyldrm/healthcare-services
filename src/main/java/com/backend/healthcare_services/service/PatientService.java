@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @AllArgsConstructor
 @Service
@@ -30,6 +31,11 @@ public class PatientService {
 
     public List<PatientDTO> findAll() {
         return patientRepository.findAllByx();
+    }
+
+    public PatientDTO findByIdAuth(Long id) {
+        return patientRepository.findByIdOrderById(id).orElseThrow(() ->
+                new ResourceNotFoundException(String.format(PATIENT_NOT_FOUND_MSG, id)));
     }
 
     public void addPatient(Long userId, Patient patient) {
