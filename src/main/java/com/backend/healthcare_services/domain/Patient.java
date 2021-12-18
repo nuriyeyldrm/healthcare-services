@@ -8,6 +8,7 @@ import lombok.Setter;
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -21,6 +22,10 @@ public class Patient implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @OneToOne(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    private User userId;
+
     @Size(max = 300, message = "Size exceeded")
     @Column(length = 300)
     private String medicalHistory;
@@ -28,4 +33,10 @@ public class Patient implements Serializable {
     @Size(max = 300, message = "Size exceeded")
     @Column(nullable = false, length = 300)
     private String disease;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "patient_documents",
+            joinColumns = @JoinColumn(name = "patient_id"),
+            inverseJoinColumns = @JoinColumn(name = "file_id"))
+    private Set<FileDB> analyzes;
 }

@@ -8,6 +8,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -38,4 +39,10 @@ public class Doctor implements Serializable {
 
     @Column(nullable = false)
     private Boolean isAvailable;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "doctor_certificates",
+            joinColumns = @JoinColumn(name = "doctor_id"),
+            inverseJoinColumns = @JoinColumn(name = "file_id"))
+    private Set<FileDB> certificates;
 }
