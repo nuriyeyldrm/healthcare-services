@@ -28,11 +28,11 @@ public class Patient implements Serializable {
 
     @Size(max = 300, message = "Size exceeded")
     @Column(length = 300)
-    private String medicalHistory;
+    private String medicalHistories;
 
     @Size(max = 300, message = "Size exceeded")
     @Column(nullable = false, length = 300)
-    private String disease;
+    private String diseases;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "patient_documents",

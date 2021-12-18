@@ -160,8 +160,12 @@ public class User implements Serializable {
             if (role[i].getName().equals(UserRole.ROLE_ADMIN))
                 roles1.add("Administrator");
             else
-                roles1.add("Customer");
+                roles1.add("Patient");
         }
         return roles1;
+    }
+
+    public String getFullName() {
+        return this.firstName + " " + this.lastName;
     }
 }

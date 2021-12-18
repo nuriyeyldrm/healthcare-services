@@ -1,6 +1,7 @@
 package com.backend.healthcare_services.controller;
 
 import com.backend.healthcare_services.domain.Patient;
+import com.backend.healthcare_services.dto.PatientDTO;
 import com.backend.healthcare_services.service.PatientService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -23,6 +24,15 @@ import java.util.Map;
 public class PatientController {
 
     public PatientService patientService;
+
+    @GetMapping("/{id}")
+    @PreAuthorize("hasRole('PATIENT')")
+    public ResponseEntity<PatientDTO> getPatientById(HttpServletRequest request,
+                                                     @PathVariable Long id){
+        Long userId = (Long) request.getAttribute("id");
+        PatientDTO patient = patientService.findById(id, userId);
+        return new ResponseEntity<>(patient, HttpStatus.OK);
+    }
 
     @PostMapping("/add")
     @PreAuthorize("hasRole('PATIENT')")
