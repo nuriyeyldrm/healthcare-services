@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -18,4 +19,7 @@ public interface PatientRepository extends JpaRepository<Patient, Long> {
     @Query("SELECT new com.backend.healthcare_services.dto.PatientDTO(p) FROM Patient p " +
             "WHERE p.id = ?1 and p.userId = ?2")
     Optional<PatientDTO> findByIdAndUserIdx(Long id, User userId) throws ResourceNotFoundException;
+
+    @Query("SELECT new com.backend.healthcare_services.dto.PatientDTO(p) FROM Patient p")
+    List<PatientDTO> findAllByx();
 }

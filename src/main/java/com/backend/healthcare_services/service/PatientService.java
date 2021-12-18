@@ -9,6 +9,8 @@ import com.backend.healthcare_services.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @AllArgsConstructor
 @Service
 public class PatientService {
@@ -24,6 +26,10 @@ public class PatientService {
 
         return patientRepository.findByIdAndUserIdx(id, user).orElseThrow(() ->
                 new ResourceNotFoundException(String.format(PATIENT_NOT_FOUND_MSG, id)));
+    }
+
+    public List<PatientDTO> findAll() {
+        return patientRepository.findAllByx();
     }
 
     public void addPatient(Long userId, Patient patient) {

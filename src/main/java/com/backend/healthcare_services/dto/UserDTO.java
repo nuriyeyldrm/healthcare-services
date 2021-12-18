@@ -1,6 +1,7 @@
 package com.backend.healthcare_services.dto;
 
 import com.backend.healthcare_services.domain.Role;
+import com.backend.healthcare_services.domain.User;
 import com.backend.healthcare_services.domain.enumeration.UserRole;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
@@ -71,6 +72,19 @@ public class UserDTO {
         this.age = age;
         this.gender = gender;
         this.builtIn = builtIn;
+    }
+
+    public UserDTO(User user) {
+        this.firstName = user.getFirstName();
+        this.lastName = user.getLastName();
+        this.phoneNumber = user.getPhoneNumber();
+        this.email = user.getEmail();
+        this.address = user.getAddress();
+        this.zipCode = user.getZipCode();
+        this.roles = user.getRoles();
+        this.age = user.getAge();
+        this.gender = user.getGender();
+        this.builtIn = user.getBuiltIn();
     }
 
     public void setRole(Set<Role> roles) {

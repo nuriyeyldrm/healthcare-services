@@ -14,6 +14,7 @@ import javax.validation.Valid;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -32,6 +33,13 @@ public class PatientController {
         Long userId = (Long) request.getAttribute("id");
         PatientDTO patient = patientService.findById(id, userId);
         return new ResponseEntity<>(patient, HttpStatus.OK);
+    }
+
+    @GetMapping()
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SECRETARY') or hasRole('NURSE') or hasRole('DOCTOR')")
+    public ResponseEntity<List<PatientDTO>> getAllPatient(){
+        List<PatientDTO> patients = patientService.findAll();
+        return new ResponseEntity<>(patients, HttpStatus.OK);
     }
 
     @PostMapping("/add")

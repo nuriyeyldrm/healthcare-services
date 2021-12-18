@@ -2,6 +2,8 @@ package com.backend.healthcare_services.dto;
 
 import com.backend.healthcare_services.domain.FileDB;
 import com.backend.healthcare_services.domain.Patient;
+import com.backend.healthcare_services.projection.ProjectUser;
+import com.backend.healthcare_services.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,16 +18,14 @@ import java.util.Set;
 public class PatientDTO {
 
     private Long id;
-    private Long userId;
-    private String fullName;
+    private UserDTO user;
     private String medicalHistories;
     private String diseases;
     private Set<FileDB> analyzes;
 
     public PatientDTO(Patient patient) {
         this.id = patient.getId();
-        this.userId = patient.getUserId().getId();
-        this.fullName = patient.getUserId().getFullName();
+        this.user = new UserDTO(patient.getUserId());
         this.medicalHistories = patient.getMedicalHistories();
         this.diseases = patient.getDiseases();
         this.analyzes = patient.getAnalyzes();
