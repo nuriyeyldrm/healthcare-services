@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 @Getter
@@ -25,7 +26,8 @@ public class Nurse implements Serializable {
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User userId;
 
-    @Enumerated(EnumType.STRING)
-    @Column(length = 50, nullable = false)
-    private DoctorProfession department;
+    @ManyToOne
+    @JoinColumn(name = "department", referencedColumnName = "department", nullable = false)
+    @NotNull(message = "Please choose department")
+    private Department department;
 }

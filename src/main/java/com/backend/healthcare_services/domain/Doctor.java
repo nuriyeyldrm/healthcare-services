@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Set;
 
@@ -33,6 +34,11 @@ public class Doctor implements Serializable {
     @Enumerated(EnumType.STRING)
     @Column(length = 50, nullable = false)
     private DoctorProfession profession;
+
+    @ManyToOne
+    @JoinColumn(name = "department", referencedColumnName = "department", nullable = false)
+    @NotNull(message = "Please choose department")
+    private Department department;
 
     @Column(nullable = false)
     private Double appointmentFee;

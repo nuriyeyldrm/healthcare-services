@@ -35,6 +35,11 @@ public class Appointment {
     @JoinColumn(name = "patient_id", referencedColumnName = "id")
     private Patient patientId;
 
+    @ManyToOne
+    @JoinColumn(name = "department", referencedColumnName = "department", nullable = false)
+    @NotNull(message = "Please choose department")
+    private Department department;
+
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern="MM/dd/yyyy HH:mm:ss", timezone = "Turkey")
     @NotNull(message = "Please enter the appointment time")
     @Column(nullable = false)
