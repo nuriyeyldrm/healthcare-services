@@ -45,17 +45,17 @@ public class UserController {
 
     @GetMapping("/user/{id}/auth")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<UserDTO> getUserByIdAdmin(@PathVariable Long id){
-        UserDTO user = userService.findById(id);
+    public ResponseEntity<ProjectUser> getUserByIdAdmin(@PathVariable Long id){
+        ProjectUser user = userService.findById(id);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
     @GetMapping("/user")
     @PreAuthorize("hasRole('PATIENT') or hasRole('ADMIN') or hasRole('SECRETARY')" +
             " or hasRole('NURSE') or hasRole('DOCTOR')")
-    public ResponseEntity<UserDTO> getUserById(HttpServletRequest request){
+    public ResponseEntity<ProjectUser> getUserById(HttpServletRequest request){
         Long id = (Long) request.getAttribute("id");
-        UserDTO userDao = userService.findById(id);
+        ProjectUser userDao = userService.findById(id);
         return new ResponseEntity<>(userDao, HttpStatus.OK);
     }
 

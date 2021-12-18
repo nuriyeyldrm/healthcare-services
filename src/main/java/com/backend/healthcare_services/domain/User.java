@@ -120,33 +120,6 @@ public class User implements Serializable {
         this.gender = gender;
     }
 
-    public User(Long id, String firstName, String lastName, String phoneNumber, String email, String address,
-                String zipCode, Set<Role> roles, Integer age, String gender) {
-        this.id = id;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.phoneNumber = phoneNumber;
-        this.email = email;
-        this.address = address;
-        this.zipCode = zipCode;
-        this.roles = roles;
-        this.age = age;
-        this.gender = gender;
-    }
-
-    public User(Long id, String firstName, String lastName, String phoneNumber, String address, String zipCode,
-                Set<Role> roles, Integer age, String gender) {
-        this.id = id;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.phoneNumber = phoneNumber;
-        this.address = address;
-        this.zipCode = zipCode;
-        this.roles = roles;
-        this.age = age;
-        this.gender = gender;
-    }
-
     public Set<Role> getRole() {
         return roles;
     }
@@ -163,9 +136,5 @@ public class User implements Serializable {
                 roles1.add("Patient");
         }
         return roles1;
-    }
-
-    public String getFullName() {
-        return this.firstName + " " + this.lastName;
     }
 }

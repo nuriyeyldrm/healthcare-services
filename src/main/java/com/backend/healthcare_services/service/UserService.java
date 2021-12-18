@@ -49,16 +49,9 @@ public class UserService {
         return userRepository.findAllBy();
     }
 
-    public UserDTO findById(Long id) throws ResourceNotFoundException {
-        User user = userRepository.findById(id)
+    public ProjectUser findById(Long id) throws ResourceNotFoundException {
+        return userRepository.findByIdOrderByFirstName(id)
                 .orElseThrow(() -> new ResourceNotFoundException(String.format(USER_NOT_FOUND_MSG, id)));
-
-        UserDTO userDTO = new UserDTO();
-        userDTO.setRole(user.getRole());
-
-        return new UserDTO(user.getFirstName(), user.getLastName(), user.getPhoneNumber(), user.getEmail(),
-                user.getAddress(), user.getZipCode(), userDTO.getRoles(), user.getAge(),
-                user.getGender(), user.getBuiltIn());
     }
 
     public void register(AdminDTO adminDTO) throws BadRequestException {

@@ -25,6 +25,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     List<ProjectUser> findAllBy();
 
+    Optional<ProjectUser> findByIdOrderByFirstName(Long id);
+
     @Transactional
     @Modifying
     @Query("UPDATE User u " +
