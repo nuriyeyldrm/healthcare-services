@@ -80,16 +80,7 @@ public class UserService {
 
         userRepository.save(user);
 
-        String token = UUID.randomUUID().toString();
-
-        ConfirmationToken confirmationToken = new ConfirmationToken(token, LocalDateTime.now(),
-                LocalDateTime.now().plusMinutes(15), user);
-
-        confirmationTokenService.saveConfirmationToken(confirmationToken);
-
-        String link = "http://localhost:8080/healthcare-services/api/user/confirm?token=" + token;
-
-        emailSender.send(user.getEmail(), buildEmail(user.getFirstName(), link));
+        sendEmail(user);
     }
 
     @Transactional
@@ -111,16 +102,14 @@ public class UserService {
         confirmationTokenService.setConfirmedDate(token);
         userRepository.enableAppUser(confirmationToken.getUsers().getEmail());
 
-        return "confirmed";
+        return "Email is confirmed! You can login right now :)";
     }
 
     public void login(String email, String password) throws AuthException {
         try {
             Optional<User> user = userRepository.findByEmail(email);
 
-            ConfirmationToken confirmationToken = confirmationTokenRepository.findByUsers(user.get());
-
-            if (confirmationToken.getConfirmedDate() == null) {
+            if (!user.get().getEnabled()) {
                 throw new IllegalStateException("e-mail not confirmed yet");
             }
 
@@ -134,53 +123,43 @@ public class UserService {
     public String updateUser(Long id, UserDTO userDTO) throws BadRequestException {
 
         boolean emailExists = userRepository.existsByEmail(userDTO.getEmail());
-        Optional<User> userDetails = userRepository.findById(id);
-        ConfirmationToken confirmation = confirmationTokenRepository.findByUsers(userDetails.get());
+        User userDetails = userRepository.findById(id).orElseThrow(() ->
+                new ResourceNotFoundException(String.format(USER_NOT_FOUND_MSG, id)));
 
-        if (userDetails.get().getBuiltIn()){
+        if (userDetails.getBuiltIn()){
             throw new ResourceNotFoundException("You dont have permission to update user info!");
         }
 
-        if (emailExists && !userDTO.getEmail().equals(userDetails.get().getEmail())){
+        if (emailExists && !userDTO.getEmail().equals(userDetails.getEmail())){
             throw new ConflictException("Error: Email is already in use!");
         }
 
         Set<String> userRoles = userDTO.getRoles();
         Set<Role> roles = addRoles(userRoles);
 
-        if (userDTO.getEmail().equals(userDetails.get().getEmail())) {
+        if (userDTO.getEmail().equals(userDetails.getEmail())) {
 
-            userDetails.get().setFirstName(userDTO.getFirstName());
-            userDetails.get().setLastName(userDTO.getLastName());
-            userDetails.get().setPhoneNumber(userDTO.getPhoneNumber());
-            userDetails.get().setAddress(userDTO.getAddress());
-            userDetails.get().setZipCode(userDTO.getZipCode());
-            userDetails.get().setRoles(roles);
-            userDetails.get().setAge(userDTO.getAge());
-            userDetails.get().setGender(userDTO.getGender());
+            userDetails.setFirstName(userDTO.getFirstName());
+            userDetails.setLastName(userDTO.getLastName());
+            userDetails.setPhoneNumber(userDTO.getPhoneNumber());
+            userDetails.setAddress(userDTO.getAddress());
+            userDetails.setZipCode(userDTO.getZipCode());
+            userDetails.setRoles(roles);
+            userDetails.setAge(userDTO.getAge());
+            userDetails.setGender(userDTO.getGender());
 
-            userRepository.save(userDetails.get());
+            userRepository.save(userDetails);
             return "Updated successfully!";
         }
 
         else {
-            User user = new User(id, userDTO.getFirstName(), userDTO.getLastName(), userDetails.get().getPassword(),
+            User user = new User(id, userDTO.getFirstName(), userDTO.getLastName(), userDetails.getPassword(),
                     userDTO.getPhoneNumber(), userDTO.getEmail(), userDTO.getAddress(), userDTO.getZipCode(), roles,
                     userDTO.getAge(), userDTO.getGender());
 
             userRepository.save(user);
 
-            String token = UUID.randomUUID().toString();
-
-            ConfirmationToken confirmationToken = new ConfirmationToken(confirmation.getId(), token,
-                    LocalDateTime.now(), LocalDateTime.now().plusMinutes(15), user);
-
-            confirmationTokenService.saveConfirmationToken(confirmationToken);
-
-            String link = "http://localhost:8080/healthcare-services/api/user/confirm?token=" + token;
-
-            emailSender.send(user.getEmail(), buildEmail(user.getFirstName(), link));
-            return "Updated successfully! Please confirm your email!";
+            return sendEmail(user);
         }
 
     }
@@ -188,18 +167,19 @@ public class UserService {
     public void updateUserAuth(Long id, AdminDTO adminDTO) throws BadRequestException {
 
         boolean emailExists = userRepository.existsByEmail(adminDTO.getEmail());
-        Optional<User> userDetails = userRepository.findById(id);
+        User userDetails = userRepository.findById(id).orElseThrow(() ->
+                new ResourceNotFoundException(String.format(USER_NOT_FOUND_MSG, id)));
 
-        if (userDetails.get().getBuiltIn()){
+        if (userDetails.getBuiltIn()){
             throw new ResourceNotFoundException("You dont have permission to update user info!");
         }
 
-        if (emailExists && !adminDTO.getEmail().equals(userDetails.get().getEmail())){
+        if (emailExists && !adminDTO.getEmail().equals(userDetails.getEmail())){
             throw new ConflictException("Error: Email is already in use!");
         }
 
         if (adminDTO.getPassword() == null) {
-            adminDTO.setPassword(userDetails.get().getPassword());
+            adminDTO.setPassword(userDetails.getPassword());
         }
 
         else {
@@ -220,31 +200,32 @@ public class UserService {
     }
 
     public void updatePassword(Long id, String newPassword, String oldPassword) throws BadRequestException {
-        Optional<User> user = userRepository.findById(id);
+        User user = userRepository.findById(id).orElseThrow(() ->
+                new ResourceNotFoundException(String.format(USER_NOT_FOUND_MSG, id)));
 
-        if (user.get().getBuiltIn()){
+        if (user.getBuiltIn()){
             throw new ResourceNotFoundException("You dont have permission to update password!");
         }
 
-        if (!(BCrypt.hashpw(oldPassword, user.get().getPassword()).equals(user.get().getPassword())))
+        if (!(BCrypt.hashpw(oldPassword, user.getPassword()).equals(user.getPassword())))
             throw new BadRequestException("password does not match");
 
         String hashedPassword = passwordEncoder.encode(newPassword);
-        user.get().setPassword(hashedPassword);
-        userRepository.save(user.get());
+        user.setPassword(hashedPassword);
+        userRepository.save(user);
     }
 
     public void removeById(Long id) throws ResourceNotFoundException {
         User user = userRepository.findById(id).orElseThrow(() ->
                 new ResourceNotFoundException(String.format(USER_NOT_FOUND_MSG, id)));
 
-        ConfirmationToken confirmationToken = confirmationTokenRepository.findByUsers(user);
+        Optional<ConfirmationToken> confirmationToken = confirmationTokenRepository.findByUsers(user);
 
         if (user.getBuiltIn()){
             throw new ResourceNotFoundException("You dont have permission to delete user!");
         }
 
-        confirmationTokenRepository.deleteById(confirmationToken.getId());
+        confirmationTokenRepository.deleteById(confirmationToken.get().getId());
         userRepository.deleteById(id);
     }
 
@@ -291,6 +272,27 @@ public class UserService {
         }
 
         return roles;
+    }
+
+    private String sendEmail(User user) {
+        Optional<ConfirmationToken> confirmation = confirmationTokenRepository.findByUsers(user);
+        String token = UUID.randomUUID().toString();
+        ConfirmationToken confirmationToken;
+
+        confirmationToken = confirmation.map(value ->
+                new ConfirmationToken(value.getId(), token,
+                        LocalDateTime.now(), LocalDateTime.now().plusMinutes(15), user))
+                .orElseGet(() ->
+                new ConfirmationToken(token, LocalDateTime.now(),
+                        LocalDateTime.now().plusMinutes(15), user));
+
+
+        confirmationTokenService.saveConfirmationToken(confirmationToken);
+
+        String link = "http://localhost:8080/healthcare-services/api/user/confirm?token=" + token;
+
+        emailSender.send(user.getEmail(), buildEmail(user.getFirstName(), link));
+        return "Updated successfully! Please confirm your email!";
     }
 
     private String buildEmail(String name, String link) {

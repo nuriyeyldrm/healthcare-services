@@ -132,6 +132,12 @@ public class User implements Serializable {
         for (int i = 0; i < roles.size(); i++) {
             if (role[i].getName().equals(UserRole.ROLE_ADMIN))
                 roles1.add("Administrator");
+            else if (role[i].getName().equals(UserRole.ROLE_NURSE))
+                roles1.add("Nurse");
+            else if (role[i].getName().equals(UserRole.ROLE_DOCTOR))
+                roles1.add("Doctor");
+            else if (role[i].getName().equals(UserRole.ROLE_SECRETARY))
+                roles1.add("Secretary");
             else
                 roles1.add("Patient");
         }

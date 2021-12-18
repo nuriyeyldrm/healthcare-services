@@ -17,7 +17,7 @@ public interface ConfirmationTokenRepository extends JpaRepository<ConfirmationT
 
     Optional<ConfirmationToken> findByToken(String token) throws ResourceNotFoundException;
 
-    ConfirmationToken findByUsers(User user) throws ResourceNotFoundException;
+    Optional<ConfirmationToken> findByUsers(User user) throws ResourceNotFoundException;
 
     @Transactional
     @Modifying
