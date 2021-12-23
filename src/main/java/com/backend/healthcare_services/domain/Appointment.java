@@ -35,9 +35,8 @@ public class Appointment {
     @JoinColumn(name = "patient_id", referencedColumnName = "id")
     private Patient patientId;
 
-    @ManyToOne
-    @JoinColumn(name = "department", referencedColumnName = "department", nullable = false)
-    @NotNull(message = "Please choose department")
+    @OneToOne(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "department_id", referencedColumnName = "id")
     private Department department;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern="MM/dd/yyyy HH:mm:ss", timezone = "Turkey")

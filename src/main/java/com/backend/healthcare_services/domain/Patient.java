@@ -22,7 +22,7 @@ public class Patient implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User userId;
 
@@ -34,9 +34,21 @@ public class Patient implements Serializable {
     @Column(nullable = false, length = 300)
     private String diseases;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "patient_documents",
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "patient_medical_imaging",
             joinColumns = @JoinColumn(name = "patient_id"),
             inverseJoinColumns = @JoinColumn(name = "file_id"))
-    private Set<FileDB> analyzes;
+    private Set<FileDB> medicalImaging;
+
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "patient_prescriptions",
+            joinColumns = @JoinColumn(name = "patient_id"),
+            inverseJoinColumns = @JoinColumn(name = "file_id"))
+    private Set<FileDB> prescriptions;
+
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "patient_blood_tests",
+            joinColumns = @JoinColumn(name = "patient_id"),
+            inverseJoinColumns = @JoinColumn(name = "file_id"))
+    private Set<FileDB> bloodTests;
 }

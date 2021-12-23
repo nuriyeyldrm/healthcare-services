@@ -36,7 +36,7 @@ public class Doctor implements Serializable {
     private DoctorProfession profession;
 
     @ManyToOne
-    @JoinColumn(name = "department", referencedColumnName = "department", nullable = false)
+    @JoinColumn(name = "department_id", referencedColumnName = "id", nullable = false)
     @NotNull(message = "Please choose department")
     private Department department;
 
@@ -46,7 +46,7 @@ public class Doctor implements Serializable {
     @Column(nullable = false)
     private Boolean isAvailable;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "doctor_certificates",
             joinColumns = @JoinColumn(name = "doctor_id"),
             inverseJoinColumns = @JoinColumn(name = "file_id"))

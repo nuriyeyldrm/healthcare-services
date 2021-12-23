@@ -21,13 +21,17 @@ public class PatientDTO {
     private UserDTO user;
     private String medicalHistories;
     private String diseases;
-    private Set<FileDB> analyzes;
+    private Set<FileDB> medicalImaging;
+    private Set<FileDB> prescriptions;
+    private Set<FileDB> bloodTests;
 
     public PatientDTO(Patient patient) {
         this.id = patient.getId();
         this.user = new UserDTO(patient.getUserId());
         this.medicalHistories = patient.getMedicalHistories();
         this.diseases = patient.getDiseases();
-        this.analyzes = patient.getAnalyzes();
+        this.medicalImaging = patient.getMedicalImaging();
+        this.prescriptions = patient.getPrescriptions();
+        this.bloodTests = patient.getBloodTests();
     }
 }

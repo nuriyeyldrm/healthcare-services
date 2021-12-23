@@ -27,7 +27,7 @@ public class Nurse implements Serializable {
     private User userId;
 
     @ManyToOne
-    @JoinColumn(name = "department", referencedColumnName = "department", nullable = false)
+    @JoinColumn(name = "department_id", referencedColumnName = "id", nullable = false)
     @NotNull(message = "Please choose department")
     private Department department;
 }

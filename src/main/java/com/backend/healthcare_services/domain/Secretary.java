@@ -1,6 +1,5 @@
 package com.backend.healthcare_services.domain;
 
-import com.backend.healthcare_services.domain.enumeration.DoctorProfession;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,7 +26,7 @@ public class Secretary implements Serializable {
     private User userId;
 
     @ManyToOne
-    @JoinColumn(name = "department", referencedColumnName = "department", nullable = false)
+    @JoinColumn(name = "department_id", referencedColumnName = "id", nullable = false)
     @NotNull(message = "Please choose department")
     private Department department;
 }
