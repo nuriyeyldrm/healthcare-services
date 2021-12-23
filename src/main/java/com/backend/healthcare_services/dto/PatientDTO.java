@@ -2,8 +2,6 @@ package com.backend.healthcare_services.dto;
 
 import com.backend.healthcare_services.domain.FileDB;
 import com.backend.healthcare_services.domain.Patient;
-import com.backend.healthcare_services.projection.ProjectUser;
-import com.backend.healthcare_services.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

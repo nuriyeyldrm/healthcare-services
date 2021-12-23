@@ -20,12 +20,12 @@ public interface PatientRepository extends JpaRepository<Patient, Long> {
             "WHERE p.id = ?1 and p.userId = ?2")
     Optional<PatientDTO> findByIdAndUserIdx(Long id, User userId) throws ResourceNotFoundException;
 
-    @Query("SELECT new com.backend.healthcare_services.dto.PatientDTO(p) FROM Patient p")
-    List<PatientDTO> findAllByx();
-
     @Query("SELECT new com.backend.healthcare_services.dto.PatientDTO(p) FROM Patient p " +
             "WHERE p.userId = ?1")
     List<PatientDTO> findByUserIdx(User userId);
 
     Optional<PatientDTO> findByIdOrderById(Long id);
+
+    @Query("SELECT new com.backend.healthcare_services.dto.PatientDTO(p) FROM Patient p")
+    List<PatientDTO> findAllByx();
 }

@@ -27,8 +27,7 @@ public class PatientController {
     public PatientService patientService;
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('PATIENT') or hasRole('ADMIN') or hasRole('SECRETARY') " +
-            "or hasRole('NURSE') or hasRole('DOCTOR')")
+    @PreAuthorize("hasRole('PATIENT')")
     public ResponseEntity<PatientDTO> getPatientById(HttpServletRequest request,
                                                      @PathVariable Long id){
         Long userId = (Long) request.getAttribute("id");
@@ -37,12 +36,11 @@ public class PatientController {
     }
 
     @GetMapping("")
-    @PreAuthorize("hasRole('PATIENT') or hasRole('ADMIN') or hasRole('SECRETARY') " +
-            "or hasRole('NURSE') or hasRole('DOCTOR')")
+    @PreAuthorize("hasRole('PATIENT')")
     public ResponseEntity<List<PatientDTO>> getPatientsByUserId(HttpServletRequest request){
         Long userId = (Long) request.getAttribute("id");
-        List<PatientDTO> patient = patientService.findByUserId(userId);
-        return new ResponseEntity<>(patient, HttpStatus.OK);
+        List<PatientDTO> patients = patientService.findByUserId(userId);
+        return new ResponseEntity<>(patients, HttpStatus.OK);
     }
 
     @GetMapping("/{id}/auth")
@@ -55,8 +53,8 @@ public class PatientController {
     @GetMapping("/{userId}/auth/all")
     @PreAuthorize("hasRole('ADMIN') or hasRole('SECRETARY') or hasRole('NURSE') or hasRole('DOCTOR')")
     public ResponseEntity<List<PatientDTO>> getPatientsByUserIdAuth(@PathVariable Long userId){
-        List<PatientDTO> patient = patientService.findByUserId(userId);
-        return new ResponseEntity<>(patient, HttpStatus.OK);
+        List<PatientDTO> patients = patientService.findByUserId(userId);
+        return new ResponseEntity<>(patients, HttpStatus.OK);
     }
 
     @GetMapping("/all")
