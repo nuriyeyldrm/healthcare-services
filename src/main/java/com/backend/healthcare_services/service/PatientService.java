@@ -10,7 +10,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @AllArgsConstructor
 @Service
@@ -29,13 +28,20 @@ public class PatientService {
                 new ResourceNotFoundException(String.format(PATIENT_NOT_FOUND_MSG, id)));
     }
 
-    public List<PatientDTO> findAll() {
-        return patientRepository.findAllByx();
+    public List<PatientDTO> findByUserId(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() ->
+                new ResourceNotFoundException(String.format(USER_NOT_FOUND_MSG, userId)));
+
+        return patientRepository.findByUserIdx(user);
     }
 
     public PatientDTO findByIdAuth(Long id) {
         return patientRepository.findByIdOrderById(id).orElseThrow(() ->
                 new ResourceNotFoundException(String.format(PATIENT_NOT_FOUND_MSG, id)));
+    }
+
+    public List<PatientDTO> findAll() {
+        return patientRepository.findAllByx();
     }
 
     public void addPatient(Long userId, Patient patient) {

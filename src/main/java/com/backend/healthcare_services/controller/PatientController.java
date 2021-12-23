@@ -27,7 +27,8 @@ public class PatientController {
     public PatientService patientService;
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('PATIENT')")
+    @PreAuthorize("hasRole('PATIENT') or hasRole('ADMIN') or hasRole('SECRETARY') " +
+            "or hasRole('NURSE') or hasRole('DOCTOR')")
     public ResponseEntity<PatientDTO> getPatientById(HttpServletRequest request,
                                                      @PathVariable Long id){
         Long userId = (Long) request.getAttribute("id");
@@ -35,10 +36,26 @@ public class PatientController {
         return new ResponseEntity<>(patient, HttpStatus.OK);
     }
 
+    @GetMapping("")
+    @PreAuthorize("hasRole('PATIENT') or hasRole('ADMIN') or hasRole('SECRETARY') " +
+            "or hasRole('NURSE') or hasRole('DOCTOR')")
+    public ResponseEntity<List<PatientDTO>> getPatientsByUserId(HttpServletRequest request){
+        Long userId = (Long) request.getAttribute("id");
+        List<PatientDTO> patient = patientService.findByUserId(userId);
+        return new ResponseEntity<>(patient, HttpStatus.OK);
+    }
+
     @GetMapping("/{id}/auth")
     @PreAuthorize("hasRole('ADMIN') or hasRole('SECRETARY') or hasRole('NURSE') or hasRole('DOCTOR')")
-    public ResponseEntity<PatientDTO> getPatientByIdOrUserId(@PathVariable Long id){
+    public ResponseEntity<PatientDTO> getPatientByIdAuth(@PathVariable Long id){
         PatientDTO patient = patientService.findByIdAuth(id);
+        return new ResponseEntity<>(patient, HttpStatus.OK);
+    }
+
+    @GetMapping("/{userId}/auth/all")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SECRETARY') or hasRole('NURSE') or hasRole('DOCTOR')")
+    public ResponseEntity<List<PatientDTO>> getPatientsByUserIdAuth(@PathVariable Long userId){
+        List<PatientDTO> patient = patientService.findByUserId(userId);
         return new ResponseEntity<>(patient, HttpStatus.OK);
     }
 

@@ -23,5 +23,9 @@ public interface PatientRepository extends JpaRepository<Patient, Long> {
     @Query("SELECT new com.backend.healthcare_services.dto.PatientDTO(p) FROM Patient p")
     List<PatientDTO> findAllByx();
 
+    @Query("SELECT new com.backend.healthcare_services.dto.PatientDTO(p) FROM Patient p " +
+            "WHERE p.userId = ?1")
+    List<PatientDTO> findByUserIdx(User userId);
+
     Optional<PatientDTO> findByIdOrderById(Long id);
 }
