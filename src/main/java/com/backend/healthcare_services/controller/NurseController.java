@@ -35,8 +35,8 @@ public class NurseController {
 
     @GetMapping("/{id}/auth")
     @PreAuthorize("hasRole('ADMIN') or hasRole('SECRETARY') or hasRole('NURSE') or hasRole('DOCTOR')")
-    public ResponseEntity<NurseDTO> getNurseByIdAuth(@PathVariable Long id){
-        NurseDTO nurse = nurseService.findByIdAuth(id);
+    public ResponseEntity<NurseDTO> getNurseById(@PathVariable Long id){
+        NurseDTO nurse = nurseService.findById(id);
         return new ResponseEntity<>(nurse, HttpStatus.OK);
     }
 
@@ -68,12 +68,35 @@ public class NurseController {
 
     @PostMapping("/{userId}/add")
     @PreAuthorize("hasRole('ADMIN') or hasRole('SECRETARY') or hasRole('NURSE') or hasRole('DOCTOR')")
-    public ResponseEntity<Map<String, Boolean>> addNurse(@PathVariable Long userId,
+    public ResponseEntity<Map<String, Boolean>> addNurseAuth(@PathVariable Long userId,
                                                          @Valid @RequestBody NurseDTO nurse) {
         nurseService.addNurse(userId, nurse);
 
         Map<String, Boolean> map = new HashMap<>();
         map.put("success", true);
         return new ResponseEntity<>(map, HttpStatus.CREATED);
+    }
+
+    @PutMapping("")
+    @PreAuthorize("hasRole('NURSE')")
+    public ResponseEntity<Map<String, Boolean>> updateNurse(HttpServletRequest request,
+                                                            @Valid @RequestBody NurseDTO nurse) {
+        Long userId = (Long) request.getAttribute("id");
+        nurseService.updateNurse(userId, nurse);
+
+        Map<String, Boolean> map = new HashMap<>();
+        map.put("success", true);
+        return new ResponseEntity<>(map, HttpStatus.OK);
+    }
+
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SECRETARY') or hasRole('NURSE') or hasRole('DOCTOR')")
+    public ResponseEntity<Map<String, Boolean>> updateNurseAuth(@PathVariable Long id,
+                                                                @Valid @RequestBody NurseDTO nurse) {
+        nurseService.updateAuthNurse(id, nurse);
+
+        Map<String, Boolean> map = new HashMap<>();
+        map.put("success", true);
+        return new ResponseEntity<>(map, HttpStatus.OK);
     }
 }

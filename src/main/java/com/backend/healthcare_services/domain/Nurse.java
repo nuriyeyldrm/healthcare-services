@@ -1,6 +1,5 @@
 package com.backend.healthcare_services.domain;
 
-import com.backend.healthcare_services.domain.enumeration.DoctorProfession;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,7 +22,7 @@ public class Nurse implements Serializable {
     private Long id;
 
     @OneToOne(cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    @JoinColumn(name = "user_id", referencedColumnName = "id", unique = true)
     private User userId;
 
     @ManyToOne
