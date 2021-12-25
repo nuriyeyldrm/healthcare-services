@@ -35,7 +35,7 @@ public class Patient implements Serializable {
     private String diseases;
 
     @OneToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "patient_medical_imaging",
+    @JoinTable(name = "medical_imaging_id",
             joinColumns = @JoinColumn(name = "patient_id"),
             inverseJoinColumns = @JoinColumn(name = "file_id"))
     private Set<FileDB> medicalImaging;
@@ -51,4 +51,8 @@ public class Patient implements Serializable {
             joinColumns = @JoinColumn(name = "patient_id"),
             inverseJoinColumns = @JoinColumn(name = "file_id"))
     private Set<FileDB> bloodTests;
+
+    @Size(max = 300, message = "Size exceeded")
+    @Column(length = 300)
+    private String diagnosis;
 }

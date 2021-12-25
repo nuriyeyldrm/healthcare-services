@@ -22,6 +22,7 @@ public class PatientDTO {
     private Set<FileDB> medicalImaging;
     private Set<FileDB> prescriptions;
     private Set<FileDB> bloodTests;
+    private String diagnosis;
 
     public PatientDTO(Patient patient) {
         this.id = patient.getId();
@@ -31,5 +32,6 @@ public class PatientDTO {
         this.medicalImaging = patient.getMedicalImaging();
         this.prescriptions = patient.getPrescriptions();
         this.bloodTests = patient.getBloodTests();
+        this.diseases = patient.getDiseases();
     }
 }

@@ -64,4 +64,14 @@ public class PatientService {
 
         patientRepository.save(patient1);
     }
+
+//    public void updatePatientAuth(Long id, String medicalImagingId, String prescriptionsId,
+//                                  String bloodTestsId, String diagnosis) {
+//
+//        Patient patient = patientRepository.findById(id).orElseThrow(() ->
+//                new ResourceNotFoundException(String.format(PATIENT_NOT_FOUND_MSG, id)));
+//
+//        PatientMedicalHistory patientMedicalHistory = patientMedHistRepository.findById(medicalImagingId);
+//
+//    }
 }
