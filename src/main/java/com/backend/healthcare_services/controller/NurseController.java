@@ -65,4 +65,15 @@ public class NurseController {
         map.put("success", true);
         return new ResponseEntity<>(map, HttpStatus.CREATED);
     }
+
+    @PostMapping("/{userId}/add")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SECRETARY') or hasRole('NURSE') or hasRole('DOCTOR')")
+    public ResponseEntity<Map<String, Boolean>> addNurse(@PathVariable Long userId,
+                                                         @Valid @RequestBody NurseDTO nurse) {
+        nurseService.addNurse(userId, nurse);
+
+        Map<String, Boolean> map = new HashMap<>();
+        map.put("success", true);
+        return new ResponseEntity<>(map, HttpStatus.CREATED);
+    }
 }
