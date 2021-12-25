@@ -27,7 +27,7 @@ public class FileDBController {
     private final FileDBService fileDBService;
 
     @PostMapping("/upload")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SECRETARY') or hasRole('NURSE') or hasRole('DOCTOR')")
     public ResponseEntity<Map<String, String>> uploadFile(@RequestParam("file") MultipartFile file) {
         try {
             FileDB fileDB = fileDBService.store(file);
@@ -44,7 +44,7 @@ public class FileDBController {
     }
 
     @GetMapping("")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SECRETARY') or hasRole('NURSE') or hasRole('DOCTOR')")
     public ResponseEntity<List<FileDTO>> getAllFiles() {
         List<FileDTO> files = fileDBService.getAllFiles().map(dbFile -> {
             String fileDownloadUri = ServletUriComponentsBuilder
@@ -61,6 +61,8 @@ public class FileDBController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('PATIENT') or hasRole('ADMIN') or hasRole('SECRETARY') " +
+            "or hasRole('NURSE') or hasRole('DOCTOR')")
     public ResponseEntity<byte[]> getFile(@PathVariable String id) {
         FileDB fileDB = fileDBService.getFile(id);
 
@@ -71,11 +73,13 @@ public class FileDBController {
     }
 
     @GetMapping("/display/{id}")
+    @PreAuthorize("hasRole('PATIENT') or hasRole('ADMIN') or hasRole('SECRETARY') " +
+            "or hasRole('NURSE') or hasRole('DOCTOR')")
     public ResponseEntity<byte[]> displayImage(@PathVariable String id) {
         FileDB fileDB = fileDBService.getFile(id);
 
         final HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.IMAGE_PNG);
+        headers.setContentType(MediaType.APPLICATION_PDF);
 
         return new ResponseEntity<>(fileDB.getData(), headers, HttpStatus.CREATED);
     }
