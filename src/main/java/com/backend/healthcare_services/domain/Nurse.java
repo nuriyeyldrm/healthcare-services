@@ -30,4 +30,9 @@ public class Nurse implements Serializable {
     @JoinColumn(name = "department_id", referencedColumnName = "id", nullable = false)
     @NotNull(message = "Please choose department")
     private Department department;
+
+    public Nurse(User userId, Department department) {
+        this.userId = userId;
+        this.department = department;
+    }
 }

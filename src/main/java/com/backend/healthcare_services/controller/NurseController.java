@@ -1,6 +1,5 @@
 package com.backend.healthcare_services.controller;
 
-import com.backend.healthcare_services.domain.Nurse;
 import com.backend.healthcare_services.dto.NurseDTO;
 import com.backend.healthcare_services.service.NurseService;
 import lombok.AllArgsConstructor;
@@ -26,12 +25,11 @@ public class NurseController {
 
     public NurseService nurseService;
 
-    @GetMapping("/{id}")
+    @GetMapping("")
     @PreAuthorize("hasRole('NURSE')")
-    public ResponseEntity<NurseDTO> getNurseById(HttpServletRequest request,
-                                                     @PathVariable Long id){
+    public ResponseEntity<NurseDTO> getNurseByUserId(HttpServletRequest request){
         Long userId = (Long) request.getAttribute("id");
-        NurseDTO nurse = nurseService.findById(id, userId);
+        NurseDTO nurse = nurseService.findByUserId(userId);
         return new ResponseEntity<>(nurse, HttpStatus.OK);
     }
 
@@ -42,11 +40,11 @@ public class NurseController {
         return new ResponseEntity<>(nurse, HttpStatus.OK);
     }
 
-    @GetMapping("/{userId}/auth/all")
+    @GetMapping("/{userId}")
     @PreAuthorize("hasRole('ADMIN') or hasRole('SECRETARY') or hasRole('NURSE') or hasRole('DOCTOR')")
-    public ResponseEntity<List<NurseDTO>> getNursesByUserIdAuth(@PathVariable Long userId){
-        List<NurseDTO> nurses = nurseService.findByUserId(userId);
-        return new ResponseEntity<>(nurses, HttpStatus.OK);
+    public ResponseEntity<NurseDTO> getNurseByUserIdAuth(@PathVariable Long userId){
+        NurseDTO nurse = nurseService.findByUserId(userId);
+        return new ResponseEntity<>(nurse, HttpStatus.OK);
     }
 
     @GetMapping("/all")
@@ -59,7 +57,7 @@ public class NurseController {
     @PostMapping("/add")
     @PreAuthorize("hasRole('NURSE')")
     public ResponseEntity<Map<String, Boolean>> addNurse(HttpServletRequest request,
-                                                           @Valid @RequestBody Nurse nurse) {
+                                                           @Valid @RequestBody NurseDTO nurse) {
         Long userId = (Long) request.getAttribute("id");
         nurseService.addNurse(userId, nurse);
 

@@ -23,5 +23,9 @@ public class Department implements Serializable {
 
     @Enumerated(EnumType.STRING)
     @Column(length = 30, nullable = false)
-    private Departments department;
+    private Departments name;
+
+    public Department(Departments name) {
+        this.name = name;
+    }
 }
