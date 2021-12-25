@@ -24,7 +24,7 @@ public class PatientService {
         User user = userRepository.findById(userId).orElseThrow(() ->
                 new ResourceNotFoundException(String.format(USER_NOT_FOUND_MSG, userId)));
 
-        return patientRepository.findByIdAndUserIdx(id, user).orElseThrow(() ->
+        return patientRepository.findByIdAndUserId(id, user).orElseThrow(() ->
                 new ResourceNotFoundException(String.format(PATIENT_NOT_FOUND_MSG, id)));
     }
 
@@ -32,7 +32,7 @@ public class PatientService {
         User user = userRepository.findById(userId).orElseThrow(() ->
                 new ResourceNotFoundException(String.format(USER_NOT_FOUND_MSG, userId)));
 
-        return patientRepository.findByUserIdx(user);
+        return patientRepository.findByUserId(user);
     }
 
     public PatientDTO findByIdAuth(Long id) {
@@ -41,7 +41,7 @@ public class PatientService {
     }
 
     public List<PatientDTO> findAll() {
-        return patientRepository.findAllByx();
+        return patientRepository.findAllBy();
     }
 
     public void addPatient(Long userId, Patient patient) {

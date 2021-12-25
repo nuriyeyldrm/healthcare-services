@@ -16,16 +16,11 @@ import java.util.Optional;
 @Transactional
 public interface PatientRepository extends JpaRepository<Patient, Long> {
 
-    @Query("SELECT new com.backend.healthcare_services.dto.PatientDTO(p) FROM Patient p " +
-            "WHERE p.id = ?1 and p.userId = ?2")
-    Optional<PatientDTO> findByIdAndUserIdx(Long id, User userId) throws ResourceNotFoundException;
+    Optional<PatientDTO> findByIdAndUserId(Long id, User userId) throws ResourceNotFoundException;
 
-    @Query("SELECT new com.backend.healthcare_services.dto.PatientDTO(p) FROM Patient p " +
-            "WHERE p.userId = ?1")
-    List<PatientDTO> findByUserIdx(User userId);
+    List<PatientDTO> findByUserId(User userId);
 
     Optional<PatientDTO> findByIdOrderById(Long id);
 
-    @Query("SELECT new com.backend.healthcare_services.dto.PatientDTO(p) FROM Patient p")
-    List<PatientDTO> findAllByx();
+    List<PatientDTO> findAllBy();
 }

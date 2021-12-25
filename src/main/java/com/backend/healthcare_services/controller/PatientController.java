@@ -59,7 +59,7 @@ public class PatientController {
 
     @GetMapping("/all")
     @PreAuthorize("hasRole('ADMIN') or hasRole('SECRETARY') or hasRole('NURSE') or hasRole('DOCTOR')")
-    public ResponseEntity<List<PatientDTO>> getAllPatient(){
+    public ResponseEntity<List<PatientDTO>> getAllPatients(){
         List<PatientDTO> patients = patientService.findAll();
         return new ResponseEntity<>(patients, HttpStatus.OK);
     }
