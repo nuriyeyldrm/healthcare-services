@@ -51,4 +51,17 @@ public class PatientService {
         patient.setUserId(user);
         patientRepository.save(patient);
     }
+
+    public void updatePatient(Long id, Long userId, Patient patient) {
+        User user = userRepository.findById(userId).orElseThrow(() ->
+                new ResourceNotFoundException(String.format(USER_NOT_FOUND_MSG, userId)));
+
+        Patient patient1 = patientRepository.findByIdAndUserIdOrderById(id, user).orElseThrow(() ->
+                new ResourceNotFoundException(String.format(PATIENT_NOT_FOUND_MSG, id)));
+
+        patient1.setMedicalHistories(patient.getMedicalHistories());
+        patient1.setDiseases(patient.getDiseases());
+
+        patientRepository.save(patient1);
+    }
 }

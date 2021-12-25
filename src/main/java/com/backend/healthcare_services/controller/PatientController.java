@@ -75,4 +75,28 @@ public class PatientController {
         map.put("success", true);
         return new ResponseEntity<>(map, HttpStatus.CREATED);
     }
+
+    @PostMapping("/{userId}/add")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SECRETARY') or hasRole('NURSE') or hasRole('DOCTOR')")
+    public ResponseEntity<Map<String, Boolean>> addPatientAuth(@PathVariable Long userId,
+                                                           @Valid @RequestBody Patient patient) {
+        patientService.addPatient(userId, patient);
+
+        Map<String, Boolean> map = new HashMap<>();
+        map.put("success", true);
+        return new ResponseEntity<>(map, HttpStatus.CREATED);
+    }
+
+    @PutMapping("/{id}/add")
+    @PreAuthorize("hasRole('PATIENT')")
+    public ResponseEntity<Map<String, Boolean>> updatePatient(HttpServletRequest request,
+                                                              @PathVariable Long id,
+                                                               @Valid @RequestBody Patient patient) {
+        Long userId = (Long) request.getAttribute("id");
+        patientService.updatePatient(id, userId, patient);
+
+        Map<String, Boolean> map = new HashMap<>();
+        map.put("success", true);
+        return new ResponseEntity<>(map, HttpStatus.OK);
+    }
 }
