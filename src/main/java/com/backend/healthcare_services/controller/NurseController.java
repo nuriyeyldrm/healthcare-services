@@ -89,11 +89,21 @@ public class NurseController {
         return new ResponseEntity<>(map, HttpStatus.OK);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/{userId}")
     @PreAuthorize("hasRole('ADMIN') or hasRole('SECRETARY') or hasRole('NURSE') or hasRole('DOCTOR')")
-    public ResponseEntity<Map<String, Boolean>> updateNurseAuth(@PathVariable Long id,
+    public ResponseEntity<Map<String, Boolean>> updateNurseAuth(@PathVariable Long userId,
                                                                 @Valid @RequestBody NurseDTO nurse) {
-        nurseService.updateAuthNurse(id, nurse);
+        nurseService.updateNurse(userId, nurse);
+
+        Map<String, Boolean> map = new HashMap<>();
+        map.put("success", true);
+        return new ResponseEntity<>(map, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Map<String, Boolean>> deleteNurse(@PathVariable Long id) {
+        nurseService.deleteById(id);
 
         Map<String, Boolean> map = new HashMap<>();
         map.put("success", true);

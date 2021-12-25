@@ -69,15 +69,10 @@ public class NurseService {
         nurseRepository.save(nurse);
     }
 
-    public void updateAuthNurse(Long id, NurseDTO nurseDTO) throws BadRequestException{
-        Nurse nurse = nurseRepository.findById(id).orElseThrow(() ->
+    public void deleteById(Long id) throws BadRequestException {
+        nurseRepository.findById(id).orElseThrow(() ->
                 new ResourceNotFoundException(String.format(NURSE_NOT_FOUND_MSG, id)));
 
-        Department departments = departmentRepository.findByName(nurseDTO.getDepartment())
-                .orElseThrow(() -> new RuntimeException("Error: Department is not found."));
-
-        nurse.setDepartment(departments);
-
-        nurseRepository.save(nurse);
+        nurseRepository.deleteById(id);
     }
 }
