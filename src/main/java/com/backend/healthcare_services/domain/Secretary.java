@@ -29,4 +29,9 @@ public class Secretary implements Serializable {
     @JoinColumn(name = "department_id", referencedColumnName = "id", nullable = false)
     @NotNull(message = "Please choose department")
     private Department department;
+
+    public Secretary(User userId, Department department) {
+        this.userId = userId;
+        this.department = department;
+    }
 }
