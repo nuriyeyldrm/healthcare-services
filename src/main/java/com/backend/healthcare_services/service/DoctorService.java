@@ -8,6 +8,8 @@ import com.backend.healthcare_services.repository.*;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @AllArgsConstructor
 @Service
 public class DoctorService {
@@ -20,7 +22,25 @@ public class DoctorService {
     private final static String USER_NOT_FOUND_MSG = "user with id %d not found";
     private final static String SECRETARY_NOT_FOUND_MSG = "secretary with id %d not found";
     private final static String DOCTOR_NOT_FOUND_MSG = "doctor with id %d not found";
+    private final static String DOCTOR_WITH_USER_ID_NOT_FOUND_MSG = "doctor with user id %d not found";
     private final static String FILE_NOT_FOUND_MSG = "file with id %s not found";
+
+    public DoctorDTO findByUserId(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() ->
+                new ResourceNotFoundException(String.format(USER_NOT_FOUND_MSG, userId)));
+
+        return doctorRepository.findByUserIdOrderByUserId(user).orElseThrow(() ->
+                new ResourceNotFoundException(String.format(DOCTOR_WITH_USER_ID_NOT_FOUND_MSG, userId)));
+    }
+
+    public DoctorDTO findById(Long id) {
+        return doctorRepository.findByIdOrderById(id).orElseThrow(() ->
+                new ResourceNotFoundException(String.format(DOCTOR_NOT_FOUND_MSG, id)));
+    }
+
+    public List<DoctorDTO> findAll() {
+        return doctorRepository.findAllBy();
+    }
 
     public void addDoctor(Long userId, Long secretaryId, String fileId, DoctorDTO doctorDTO)
             throws BadRequestException {

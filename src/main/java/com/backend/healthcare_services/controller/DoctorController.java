@@ -13,6 +13,7 @@ import javax.validation.Valid;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -23,6 +24,35 @@ import java.util.Map;
 public class DoctorController {
 
     private final DoctorService doctorService;
+
+    @GetMapping("")
+    @PreAuthorize("hasRole('DOCTOR')")
+    public ResponseEntity<DoctorDTO> getDoctorByUserId(HttpServletRequest request){
+        Long userId = (Long) request.getAttribute("id");
+        DoctorDTO doctor = doctorService.findByUserId(userId);
+        return new ResponseEntity<>(doctor, HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}/auth")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SECRETARY') or hasRole('NURSE') or hasRole('DOCTOR')")
+    public ResponseEntity<DoctorDTO> getDoctorById(@PathVariable Long id){
+        DoctorDTO doctor = doctorService.findById(id);
+        return new ResponseEntity<>(doctor, HttpStatus.OK);
+    }
+
+    @GetMapping("/{userId}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SECRETARY') or hasRole('NURSE') or hasRole('DOCTOR')")
+    public ResponseEntity<DoctorDTO> getDoctorByUserIdAuth(@PathVariable Long userId){
+        DoctorDTO doctor = doctorService.findByUserId(userId);
+        return new ResponseEntity<>(doctor, HttpStatus.OK);
+    }
+
+    @GetMapping("/all")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SECRETARY') or hasRole('NURSE') or hasRole('DOCTOR')")
+    public ResponseEntity<List<DoctorDTO>> getAllDoctors(){
+        List<DoctorDTO> doctors = doctorService.findAll();
+        return new ResponseEntity<>(doctors, HttpStatus.OK);
+    }
 
     @PostMapping("/add")
     @PreAuthorize("hasRole('DOCTOR')")

@@ -19,7 +19,7 @@ public interface NurseRepository extends JpaRepository<Nurse, Long> {
 
     Optional<Nurse> findByUserId(User userId) throws ResourceNotFoundException;
 
-    Optional<NurseDTO> findByIdOrderById(Long id);
+    Optional<NurseDTO> findByIdOrderById(Long id) throws ResourceNotFoundException;
 
     List<NurseDTO> findAllBy();
 }
