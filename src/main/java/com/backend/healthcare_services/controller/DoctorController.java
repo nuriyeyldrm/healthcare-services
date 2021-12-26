@@ -67,4 +67,17 @@ public class DoctorController {
         map.put("success", true);
         return new ResponseEntity<>(map, HttpStatus.CREATED);
     }
+
+    @PostMapping("/add/auth")
+    @PreAuthorize("hasRole('DOCTOR')")
+    public ResponseEntity<Map<String, Boolean>> addDoctorAuth(@RequestParam("userId") Long userId,
+                                                          @RequestParam("secretaryId") Long secretaryId,
+                                                          @RequestParam("fileId") String fileId,
+                                                          @Valid @RequestBody DoctorDTO doctor) {
+        doctorService.addDoctor(userId, secretaryId, fileId, doctor);
+
+        Map<String, Boolean> map = new HashMap<>();
+        map.put("success", true);
+        return new ResponseEntity<>(map, HttpStatus.CREATED);
+    }
 }
