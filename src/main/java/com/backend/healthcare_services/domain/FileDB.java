@@ -7,6 +7,8 @@ import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Setter
 @Getter
@@ -32,5 +34,11 @@ public class FileDB {
         this.name = name;
         this.type = type;
         this.data = data;
+    }
+
+    public Set<FileDB> setFile(FileDB file) {
+        Set<FileDB> fileDBS = new HashSet<>();
+        fileDBS.add(file);
+        return fileDBS;
     }
 }

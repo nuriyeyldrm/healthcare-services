@@ -44,11 +44,21 @@ public class Doctor implements Serializable {
     private Double appointmentFee;
 
     @Column(nullable = false)
-    private Boolean isAvailable;
+    private Boolean isAvailable = true;
 
     @OneToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "doctor_certificates",
             joinColumns = @JoinColumn(name = "doctor_id"),
             inverseJoinColumns = @JoinColumn(name = "file_id"))
     private Set<FileDB> certificates;
+
+    public Doctor(User userId, Secretary doctorsSecretary, DoctorProfession profession,
+                  Department department, Double appointmentFee, Set<FileDB> certificates) {
+        this.userId = userId;
+        this.doctorsSecretary = doctorsSecretary;
+        this.profession = profession;
+        this.department = department;
+        this.appointmentFee = appointmentFee;
+        this.certificates = certificates;
+    }
 }

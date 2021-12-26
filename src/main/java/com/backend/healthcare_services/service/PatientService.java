@@ -11,9 +11,7 @@ import com.backend.healthcare_services.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @AllArgsConstructor
 @Service
@@ -85,18 +83,12 @@ public class PatientService {
         FileDB bloodTests = fileDBRepository.findById(bloodTestsId).orElseThrow(() ->
                 new ResourceNotFoundException(String.format("blood tests with id %s not found", id)));
 
-
-        patient.setMedicalImaging(setFile(medicalImaging));
-        patient.setPrescriptions(setFile(prescriptions));
-        patient.setBloodTests(setFile(bloodTests));
+        FileDB file = new FileDB();
+        patient.setMedicalImaging(file.setFile(medicalImaging));
+        patient.setPrescriptions(file.setFile(prescriptions));
+        patient.setBloodTests(file.setFile(bloodTests));
         patient.setDiagnosis(diagnosis);
 
         patientRepository.save(patient);
-    }
-
-    public Set<FileDB> setFile(FileDB file) {
-        Set<FileDB> fileDBS = new HashSet<>();
-        fileDBS.add(file);
-        return fileDBS;
     }
 }
