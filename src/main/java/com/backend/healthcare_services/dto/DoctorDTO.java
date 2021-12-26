@@ -20,7 +20,7 @@ public class DoctorDTO {
 
     private Long id;
     private UserDTO userId;
-    private SecretaryDTO secretaryDTO;
+    private SecretaryOfDoctorDTO secretaryId;
     private DoctorProfession profession;
     private Departments department;
     private Double appointmentFee;
@@ -30,7 +30,7 @@ public class DoctorDTO {
     public DoctorDTO(Doctor doctor) {
         this.id = doctor.getId();
         this.userId = new UserDTO(doctor.getUserId());
-        this.secretaryDTO = new SecretaryDTO(doctor.getDoctorsSecretary());
+        this.secretaryId = new SecretaryOfDoctorDTO(doctor.getDoctorsSecretary());
         this.profession = doctor.getProfession();
         this.department = doctor.getDepartment().getName();
         this.appointmentFee = doctor.getAppointmentFee();

@@ -44,6 +44,11 @@ public class Appointment {
     @Column(nullable = false)
     private LocalDateTime appointmentTime;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern="MM/dd/yyyy HH:mm:ss", timezone = "Turkey")
+    @NotNull(message = "Please enter the appointment time")
+    @Column(nullable = false)
+    private LocalDateTime appointmentEndTime;
+
     @Enumerated(EnumType.STRING)
     @Column(length = 30, nullable = false)
     private AppointmentStatus status;
