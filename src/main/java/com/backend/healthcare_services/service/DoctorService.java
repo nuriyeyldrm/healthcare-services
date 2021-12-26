@@ -84,4 +84,11 @@ public class DoctorService {
         doctorRepository.save(doctor1);
     }
 
+    public void deleteById(Long id) throws BadRequestException {
+        doctorRepository.findById(id).orElseThrow(() ->
+                new ResourceNotFoundException(String.format(DOCTOR_NOT_FOUND_MSG, id)));
+
+        doctorRepository.deleteById(id);
+    }
+
 }

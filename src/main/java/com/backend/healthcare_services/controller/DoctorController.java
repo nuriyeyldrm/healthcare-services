@@ -107,4 +107,14 @@ public class DoctorController {
         map.put("success", true);
         return new ResponseEntity<>(map, HttpStatus.OK);
     }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Map<String, Boolean>> deleteDoctor(@PathVariable Long id) {
+        doctorService.deleteById(id);
+
+        Map<String, Boolean> map = new HashMap<>();
+        map.put("success", true);
+        return new ResponseEntity<>(map, HttpStatus.OK);
+    }
 }
