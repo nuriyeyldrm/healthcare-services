@@ -56,12 +56,32 @@ public class DoctorService {
         Department departments = departmentRepository.findByName(doctorDTO.getDepartment())
                 .orElseThrow(() -> new RuntimeException("Error: Department is not found."));
 
-
-
         Doctor doctor = new Doctor(user, secretary, doctorDTO.getProfession(), departments,
                 doctorDTO.getAppointmentFee(), (new FileDB()).setFile(fileDB));
 
         doctorRepository.save(doctor);
+    }
+
+    public void updateDoctor(Long userId, Long secretaryId, String fileId, DoctorDTO doctorDTO) throws BadRequestException{
+        User user = userRepository.findById(userId).orElseThrow(() ->
+                new ResourceNotFoundException(String.format(USER_NOT_FOUND_MSG, userId)));
+
+        Doctor doctor = doctorRepository.findByUserId(user).orElseThrow(() ->
+                new ResourceNotFoundException(String.format(DOCTOR_WITH_USER_ID_NOT_FOUND_MSG, userId)));
+
+        Secretary secretary = secretaryRepository.findById(secretaryId).orElseThrow(() ->
+                new ResourceNotFoundException(String.format(SECRETARY_NOT_FOUND_MSG, secretaryId)));
+
+        FileDB fileDB = fileDBRepository.findById(fileId).orElseThrow(() ->
+                new ResourceNotFoundException(String.format(FILE_NOT_FOUND_MSG, fileId)));
+
+        Department departments = departmentRepository.findByName(doctorDTO.getDepartment())
+                .orElseThrow(() -> new RuntimeException("Error: Department is not found."));
+
+        Doctor doctor1 = new Doctor(doctor.getId(), user, secretary, doctorDTO.getProfession(), departments,
+                doctorDTO.getAppointmentFee(), doctorDTO.getIsAvailable(), (new FileDB()).setFile(fileDB));
+
+        doctorRepository.save(doctor1);
     }
 
 }

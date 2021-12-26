@@ -80,4 +80,31 @@ public class DoctorController {
         map.put("success", true);
         return new ResponseEntity<>(map, HttpStatus.CREATED);
     }
+
+    @PutMapping("")
+    @PreAuthorize("hasRole('DOCTOR')")
+    public ResponseEntity<Map<String, Boolean>> updateDoctor(HttpServletRequest request,
+                                                             @RequestParam("secretaryId") Long secretaryId,
+                                                             @RequestParam("fileId") String fileId,
+                                                             @Valid @RequestBody DoctorDTO doctor) {
+        Long userId = (Long) request.getAttribute("id");
+        doctorService.updateDoctor(userId, secretaryId, fileId, doctor);
+
+        Map<String, Boolean> map = new HashMap<>();
+        map.put("success", true);
+        return new ResponseEntity<>(map, HttpStatus.OK);
+    }
+
+    @PutMapping("/{userId}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SECRETARY') or hasRole('NURSE') or hasRole('DOCTOR')")
+    public ResponseEntity<Map<String, Boolean>> updateDoctorAuth(@RequestParam("userId") Long userId,
+                                                                 @RequestParam("secretaryId") Long secretaryId,
+                                                                 @RequestParam("fileId") String fileId,
+                                                                 @Valid @RequestBody DoctorDTO doctor) {
+        doctorService.updateDoctor(userId, secretaryId, fileId, doctor);
+
+        Map<String, Boolean> map = new HashMap<>();
+        map.put("success", true);
+        return new ResponseEntity<>(map, HttpStatus.OK);
+    }
 }

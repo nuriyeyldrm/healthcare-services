@@ -17,7 +17,7 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long> {
 
     Optional<DoctorDTO> findByUserIdOrderByUserId(User userId) throws ResourceNotFoundException;
 
-    Optional<DoctorDTO> findByUserId(User userId) throws ResourceNotFoundException;
+    Optional<Doctor> findByUserId(User userId) throws ResourceNotFoundException;
 
     Optional<DoctorDTO> findByIdOrderById(Long id) throws ResourceNotFoundException;
 
