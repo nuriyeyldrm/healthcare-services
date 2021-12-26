@@ -24,10 +24,6 @@ public class Appointment {
     private Long id;
 
     @OneToOne(cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
-    private User userId;
-
-    @OneToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "doctor_id", referencedColumnName = "id")
     private Doctor doctorId;
 
@@ -52,4 +48,14 @@ public class Appointment {
     @Enumerated(EnumType.STRING)
     @Column(length = 30, nullable = false)
     private AppointmentStatus status;
+
+    public Appointment(Doctor doctorId, Patient patientId, Department department, LocalDateTime appointmentTime,
+                       LocalDateTime appointmentEndTime, AppointmentStatus status) {
+        this.doctorId = doctorId;
+        this.patientId = patientId;
+        this.department = department;
+        this.appointmentTime = appointmentTime;
+        this.appointmentEndTime = appointmentEndTime;
+        this.status = status;
+    }
 }
