@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Setter
@@ -19,9 +20,9 @@ public class PatientDTO {
     private UserDTO user;
     private String medicalHistories;
     private String diseases;
-    private Set<FileDB> medicalImaging;
-    private Set<FileDB> prescriptions;
-    private Set<FileDB> bloodTests;
+    private Set<String> medicalImaging;
+    private Set<String> prescriptions;
+    private Set<String> bloodTests;
     private String diagnosis;
 
     public PatientDTO(Patient patient) {
@@ -29,9 +30,20 @@ public class PatientDTO {
         this.user = new UserDTO(patient.getUserId());
         this.medicalHistories = patient.getMedicalHistories();
         this.diseases = patient.getDiseases();
-        this.medicalImaging = patient.getMedicalImaging();
-        this.prescriptions = patient.getPrescriptions();
-        this.bloodTests = patient.getBloodTests();
-        this.diseases = patient.getDiseases();
+        this.medicalImaging = setFile(patient.getMedicalImaging());
+        this.prescriptions = setFile(patient.getPrescriptions());
+        this.bloodTests = setFile(patient.getBloodTests());
+        this.diagnosis = patient.getDiagnosis();
+    }
+
+    public Set<String> setFile(Set<FileDB> files) {
+        Set<String> out = new HashSet<>();
+        FileDB[] file = files.toArray(new FileDB[files.size()]);
+
+        for (int i = 0; i < files.size(); i++) {
+            out.add(file[i].getId());
+
+        }
+        return out;
     }
 }

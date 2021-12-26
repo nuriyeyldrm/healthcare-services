@@ -23,7 +23,7 @@ import java.util.Map;
 @RequestMapping("/nurse")
 public class NurseController {
 
-    public NurseService nurseService;
+    private final NurseService nurseService;
 
     @GetMapping("")
     @PreAuthorize("hasRole('NURSE')")

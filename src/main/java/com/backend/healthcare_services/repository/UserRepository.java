@@ -1,8 +1,6 @@
 package com.backend.healthcare_services.repository;
 
-import com.backend.healthcare_services.domain.Role;
 import com.backend.healthcare_services.domain.User;
-import com.backend.healthcare_services.exception.BadRequestException;
 import com.backend.healthcare_services.exception.ConflictException;
 import com.backend.healthcare_services.exception.ResourceNotFoundException;
 import com.backend.healthcare_services.projection.ProjectUser;
@@ -15,8 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
+@Transactional
 @Repository
-@Transactional(readOnly = true)
 public interface UserRepository extends JpaRepository<User, Long> {
 
     boolean existsByEmail(String email) throws ConflictException;
@@ -25,9 +23,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     List<ProjectUser> findAllBy();
 
-    Optional<ProjectUser> findByIdOrderByFirstName(Long id);
+    Optional<ProjectUser> findByIdOrderByFirstName(Long id) throws ResourceNotFoundException;
 
-    @Transactional
     @Modifying
     @Query("UPDATE User u " +
             "SET u.enabled = TRUE WHERE u.email =?1")

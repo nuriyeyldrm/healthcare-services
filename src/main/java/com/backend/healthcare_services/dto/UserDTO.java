@@ -1,8 +1,6 @@
 package com.backend.healthcare_services.dto;
 
-import com.backend.healthcare_services.domain.Role;
 import com.backend.healthcare_services.domain.User;
-import com.backend.healthcare_services.domain.enumeration.UserRole;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,7 +11,6 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
-import java.util.HashSet;
 import java.util.Set;
 
 @Setter
@@ -85,25 +82,5 @@ public class UserDTO {
         this.age = user.getAge();
         this.gender = user.getGender();
         this.builtIn = user.getBuiltIn();
-    }
-
-    public void setRole(Set<Role> roles) {
-        Set<String> roles1 = new HashSet<>();
-        Role[] role = roles.toArray(new Role[roles.size()]);
-
-        for (int i = 0; i < roles.size(); i++) {
-            if (role[i].getName().equals(UserRole.ROLE_ADMIN))
-                roles1.add("Administrator");
-            else if (role[i].getName().equals(UserRole.ROLE_NURSE))
-                roles1.add("Nurse");
-            else if (role[i].getName().equals(UserRole.ROLE_DOCTOR))
-                roles1.add("Doctor");
-            else if (role[i].getName().equals(UserRole.ROLE_SECRETARY))
-                roles1.add("Secretary");
-            else
-                roles1.add("Patient");
-        }
-
-        this.roles = roles1;
     }
 }

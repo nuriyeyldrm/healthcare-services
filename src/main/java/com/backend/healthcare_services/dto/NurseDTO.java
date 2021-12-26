@@ -1,6 +1,5 @@
 package com.backend.healthcare_services.dto;
 
-import com.backend.healthcare_services.domain.Department;
 import com.backend.healthcare_services.domain.Nurse;
 import com.backend.healthcare_services.domain.enumeration.Departments;
 import lombok.AllArgsConstructor;

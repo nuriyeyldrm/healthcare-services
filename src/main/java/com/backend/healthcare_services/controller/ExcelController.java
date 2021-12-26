@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/excel")
 public class ExcelController {
 
-    ExcelService excelService;
+    private final ExcelService excelService;
 
     @GetMapping("/download/users")
     @PreAuthorize("hasRole('ADMIN')")

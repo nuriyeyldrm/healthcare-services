@@ -24,7 +24,7 @@ import java.util.Map;
 @RequestMapping("/patient")
 public class PatientController {
 
-    public PatientService patientService;
+    private final PatientService patientService;
 
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('PATIENT')")

@@ -30,11 +30,11 @@ import java.util.Map;
 @RequestMapping()
 public class UserController {
 
-    public UserService userService;
+    private final UserService userService;
 
-    public AuthenticationManager authenticationManager;
+    private final AuthenticationManager authenticationManager;
 
-    public JwtUtils jwtUtils;
+    private final JwtUtils jwtUtils;
 
     @GetMapping("/user/auth/all")
     @PreAuthorize("hasRole('ADMIN')")
