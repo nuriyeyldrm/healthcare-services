@@ -55,7 +55,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeRequests().antMatchers("/healthcare-services/api/user/**",
-                "/healthcare-services/api/excel/**", "/healthcare-services/api/patient/**").permitAll()
+                "/healthcare-services/api/excel/**", "/healthcare-services/api/patient/**",
+                "/healthcare-services/api/secretary/**", "/healthcare-services/api/nurse/**").permitAll()
                 .anyRequest().authenticated();
 
         http.csrf().disable().exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
