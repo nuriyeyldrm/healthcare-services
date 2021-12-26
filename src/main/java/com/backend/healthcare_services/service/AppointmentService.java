@@ -23,6 +23,18 @@ public class AppointmentService {
     private final static String USER_NOT_FOUND_MSG = "user with id %d not found";
     private final static String DOCTOR_NOT_FOUND_MSG = "doctor with id %d not found";
     private final static String PATIENT_NOT_FOUND_MSG = "patient with id %d not found";
+    private final static String APPOINTMENT_NOT_FOUND_MSG = "appointment with id %d not found";
+
+    public AppointmentDTO findById(Long id, Long patientId, Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() ->
+                new ResourceNotFoundException(String.format(USER_NOT_FOUND_MSG, userId)));
+
+        Patient patient = patientRepository.findByIdAndUserIdOrderById(patientId, user).orElseThrow(() ->
+                new ResourceNotFoundException(String.format(PATIENT_NOT_FOUND_MSG, patientId)));
+
+        return appointmentRepository.findByIdAndPatientId(id, patient).orElseThrow(() ->
+                new ResourceNotFoundException(String.format(APPOINTMENT_NOT_FOUND_MSG, id)));
+    }
 
     public List<AppointmentDTO> findAll() {
         return appointmentRepository.findAllBy();

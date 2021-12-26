@@ -25,6 +25,16 @@ public class AppointmentController {
 
     private final AppointmentService appointmentService;
 
+    @GetMapping("")
+    @PreAuthorize("hasRole('PATIENT')")
+    public ResponseEntity<AppointmentDTO> getAppointmentById(HttpServletRequest request,
+                                                     @RequestParam("appointmentId") Long appointmentId,
+                                                     @RequestParam("patientId") Long patientId){
+        Long userId = (Long) request.getAttribute("id");
+        AppointmentDTO appointment = appointmentService.findById(appointmentId, patientId, userId);
+        return new ResponseEntity<>(appointment, HttpStatus.OK);
+    }
+
     @GetMapping("/all")
     @PreAuthorize("hasRole('ADMIN') or hasRole('SECRETARY') or hasRole('NURSE') or hasRole('DOCTOR')")
     public ResponseEntity<List<AppointmentDTO>> getAllAppointments(){
