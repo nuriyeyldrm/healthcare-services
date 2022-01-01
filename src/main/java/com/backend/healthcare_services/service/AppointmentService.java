@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 @AllArgsConstructor
@@ -215,8 +214,9 @@ public class AppointmentService {
     }
 
     public Double price(Doctor doctorId) {
-        Optional<Doctor> doctor = doctorRepository.findById(doctorId.getId());
+        Doctor doctor = doctorRepository.findById(doctorId.getId()).orElseThrow(() ->
+                new ResourceNotFoundException(String.format(DOCTOR_NOT_FOUND_MSG, doctorId.getId())));
 
-        return doctor.get().getAppointmentFee();
+        return doctor.getAppointmentFee();
     }
 }
