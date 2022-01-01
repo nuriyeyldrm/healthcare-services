@@ -9,8 +9,10 @@ import com.backend.healthcare_services.repository.*;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @AllArgsConstructor
@@ -80,13 +82,22 @@ public class AppointmentService {
         return appointmentRepository.findAllBy();
     }
 
-    public void addAppointment(Long userId, Long doctorId, Long patientId, AppointmentDTO appointmentDTO)
+    public void addAppointment(Long userId, Doctor doctorId, Long patientId, AppointmentDTO appointmentDTO)
             throws BadRequestException {
+
+        boolean checkStatus = reservationAvailability(doctorId, appointmentDTO.getAppointmentTime(),
+                appointmentDTO.getAppointmentEndTime());
+
+        if (!checkStatus)
+            appointmentDTO.setStatus(AppointmentStatus.CREATED);
+        else
+            throw new BadRequestException("Appointment time is full! Please choose another");
+
         User user = userRepository.findById(userId).orElseThrow(() ->
                 new ResourceNotFoundException(String.format(USER_NOT_FOUND_MSG, userId)));
 
-        Doctor doctor = doctorRepository.findById(doctorId).orElseThrow(() ->
-                new ResourceNotFoundException(String.format(DOCTOR_NOT_FOUND_MSG, doctorId)));
+        Doctor doctor = doctorRepository.findById(doctorId.getId()).orElseThrow(() ->
+                new ResourceNotFoundException(String.format(DOCTOR_NOT_FOUND_MSG, doctorId.getId())));
 
         Patient patient = patientRepository.findByIdAndUserIdOrderById(patientId, user).orElseThrow(() ->
                 new ResourceNotFoundException(String.format(PATIENT_NOT_FOUND_MSG, patientId)));
@@ -98,5 +109,18 @@ public class AppointmentService {
                 appointmentDTO.getAppointmentEndTime(), AppointmentStatus.CREATED);
 
         appointmentRepository.save(appointment);
+    }
+
+    public boolean reservationAvailability(Doctor doctorId, LocalDateTime appointmentTime,
+                                           LocalDateTime appointmentEndTime) {
+        List<Appointment> checkStatus = appointmentRepository.checkStatus(doctorId, appointmentTime, appointmentEndTime,
+                AppointmentStatus.DONE, AppointmentStatus.CANCELED);
+        return checkStatus.size() > 0;
+    }
+
+    public Double price(LocalDateTime appointmentTime, LocalDateTime appointmentEndTime, Doctor doctorId) {
+        Optional<Doctor> doctor = doctorRepository.findById(doctorId.getId());
+
+        return doctor.get().getAppointmentFee();
     }
 }

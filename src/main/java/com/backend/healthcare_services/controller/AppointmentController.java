@@ -1,8 +1,10 @@
 package com.backend.healthcare_services.controller;
 
+import com.backend.healthcare_services.domain.Doctor;
 import com.backend.healthcare_services.dto.AppointmentDTO;
 import com.backend.healthcare_services.service.AppointmentService;
 import lombok.AllArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -12,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -84,7 +87,7 @@ public class AppointmentController {
     @PostMapping("/add")
     @PreAuthorize("hasRole('PATIENT')")
     public ResponseEntity<Map<String, Boolean>> addAppointment(HttpServletRequest request,
-                                                          @RequestParam("doctorId") Long doctorId,
+                                                          @RequestParam("doctorId") Doctor doctorId,
                                                           @RequestParam("patientId") Long patientId,
                                                           @Valid @RequestBody AppointmentDTO appointment) {
         Long userId = (Long) request.getAttribute("id");
@@ -93,5 +96,26 @@ public class AppointmentController {
         Map<String, Boolean> map = new HashMap<>();
         map.put("appointment appointment created successfully", true);
         return new ResponseEntity<>(map, HttpStatus.CREATED);
+    }
+
+    @GetMapping("/availability")
+    @PreAuthorize("hasRole('PATIENT') or hasRole('ADMIN') or hasRole('SECRETARY') " +
+            "or hasRole('NURSE') or hasRole('DOCTOR')")
+    public ResponseEntity<Map<String, Object>> checkCarAvailability(
+            @RequestParam (value = "doctorId") Doctor doctorId,
+            @RequestParam (value = "appointmentTime")
+            @DateTimeFormat(pattern = "MM/dd/yyyy HH:mm:ss")
+                    LocalDateTime appointmentTime,
+            @RequestParam (value = "appointmentEndTime")
+            @DateTimeFormat(pattern = "MM/dd/yyyy HH:mm:ss")
+                    LocalDateTime appointmentEndTime ){
+
+        boolean availability = appointmentService.reservationAvailability(doctorId, appointmentTime, appointmentEndTime);
+        Double appointmentFee = appointmentService.price(appointmentTime, appointmentEndTime, doctorId);
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("isAvailable", !availability);
+        map.put("appointmentFee", appointmentFee);
+        return new ResponseEntity<>(map, HttpStatus.OK);
     }
 }
