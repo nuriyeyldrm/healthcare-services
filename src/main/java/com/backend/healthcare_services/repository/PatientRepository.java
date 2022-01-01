@@ -19,7 +19,7 @@ public interface PatientRepository extends JpaRepository<Patient, Long> {
 
     Optional<Patient> findByIdAndUserIdOrderById(Long id, User userId) throws ResourceNotFoundException;
 
-    List<PatientDTO> findByUserId(User userId) throws ResourceNotFoundException;
+    List<PatientDTO> findByUserIdOrderById(User userId) throws ResourceNotFoundException;
 
     Optional<PatientDTO> findByIdOrderById(Long id) throws ResourceNotFoundException;
 

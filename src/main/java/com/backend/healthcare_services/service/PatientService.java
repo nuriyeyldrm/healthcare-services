@@ -35,7 +35,7 @@ public class PatientService {
         User user = userRepository.findById(userId).orElseThrow(() ->
                 new ResourceNotFoundException(String.format(USER_NOT_FOUND_MSG, userId)));
 
-        return patientRepository.findByUserId(user);
+        return patientRepository.findByUserIdOrderById(user);
     }
 
     public PatientDTO findByIdAuth(Long id) {
