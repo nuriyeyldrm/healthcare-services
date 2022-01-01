@@ -117,6 +117,43 @@ public class AppointmentController {
         return new ResponseEntity<>(map, HttpStatus.OK);
     }
 
+    @PutMapping("/update/auth")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SECRETARY') or hasRole('NURSE') or hasRole('DOCTOR')")
+    public ResponseEntity<Map<String, Object>> updateAppointmentAuth(@RequestParam("appointmentId") Long id,
+                                                                 @RequestParam("doctorId") Doctor doctorId,
+                                                                 @RequestParam("patientId") Long patientId,
+                                                                 @Valid @RequestBody AppointmentDTO appointment) {
+        appointmentService.updateAppointmentAuth(id, doctorId, patientId, appointment);
+        Double appointmentFee = appointmentService.price(doctorId);
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("appointment updated successfully", true);
+        map.put("appointmentFee", appointmentFee);
+        return new ResponseEntity<>(map, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/delete")
+    @PreAuthorize("hasRole('PATIENT')")
+    public ResponseEntity<Map<String, Boolean>> deleteReservation(HttpServletRequest request,
+                                                                  @RequestParam("appointmentId") Long appointmentId,
+                                                                  @RequestParam("patientId") Long patientId){
+        Long userId = (Long) request.getAttribute("id");
+        appointmentService.removeById(appointmentId, userId, patientId);
+        Map<String, Boolean> map = new HashMap<>();
+        map.put("success", true);
+        return new ResponseEntity<>(map, HttpStatus.OK);
+    }
+
+
+    @DeleteMapping("/delete/{id}/auth")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SECRETARY') or hasRole('NURSE') or hasRole('DOCTOR')")
+    public ResponseEntity<Map<String, Boolean>> deleteReservationAuth(@PathVariable Long id){
+        appointmentService.removeById(id);
+        Map<String, Boolean> map = new HashMap<>();
+        map.put("success", true);
+        return new ResponseEntity<>(map, HttpStatus.OK);
+    }
+
     @GetMapping("/availability")
     @PreAuthorize("hasRole('PATIENT') or hasRole('ADMIN') or hasRole('SECRETARY') " +
             "or hasRole('NURSE') or hasRole('DOCTOR')")
