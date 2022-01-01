@@ -35,6 +35,29 @@ public class AppointmentController {
         return new ResponseEntity<>(appointment, HttpStatus.OK);
     }
 
+    @GetMapping("/patient/{patientId}")
+    @PreAuthorize("hasRole('PATIENT')")
+    public ResponseEntity<List<AppointmentDTO>> getAppointmentsByPatientId(HttpServletRequest request,
+                                                                    @PathVariable Long patientId){
+        Long userId = (Long) request.getAttribute("id");
+        List<AppointmentDTO> appointment = appointmentService.findByPatientId(patientId, userId);
+        return new ResponseEntity<>(appointment, HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SECRETARY') or hasRole('NURSE') or hasRole('DOCTOR')")
+    public ResponseEntity<AppointmentDTO> getAppointmentByIdAuth(@PathVariable Long id){
+        AppointmentDTO appointment = appointmentService.findById(id);
+        return new ResponseEntity<>(appointment, HttpStatus.OK);
+    }
+
+    @GetMapping("/{patientId}/patient")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SECRETARY') or hasRole('NURSE') or hasRole('DOCTOR')")
+    public ResponseEntity<List<AppointmentDTO>> getAppointmentsByPatientIdAuth(@PathVariable Long patientId){
+        List<AppointmentDTO> appointment = appointmentService.findByPatientId(patientId);
+        return new ResponseEntity<>(appointment, HttpStatus.OK);
+    }
+
     @GetMapping("/all")
     @PreAuthorize("hasRole('ADMIN') or hasRole('SECRETARY') or hasRole('NURSE') or hasRole('DOCTOR')")
     public ResponseEntity<List<AppointmentDTO>> getAllAppointments(){

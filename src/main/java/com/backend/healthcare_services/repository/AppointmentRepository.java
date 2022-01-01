@@ -17,5 +17,9 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
 
     Optional<AppointmentDTO> findByIdAndPatientId(Long id, Patient patientId) throws ResourceNotFoundException;
 
+    Optional<AppointmentDTO> findByIdOrderById(Long id) throws ResourceNotFoundException;
+
+    List<AppointmentDTO> findByPatientId(Patient patientId);
+
     List<AppointmentDTO> findAllBy();
 }

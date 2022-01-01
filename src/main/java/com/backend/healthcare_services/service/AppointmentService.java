@@ -36,6 +36,28 @@ public class AppointmentService {
                 new ResourceNotFoundException(String.format(APPOINTMENT_NOT_FOUND_MSG, id)));
     }
 
+    public List<AppointmentDTO> findByPatientId(Long patientId, Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() ->
+                new ResourceNotFoundException(String.format(USER_NOT_FOUND_MSG, userId)));
+
+        Patient patient = patientRepository.findByIdAndUserIdOrderById(patientId, user).orElseThrow(() ->
+                new ResourceNotFoundException(String.format(PATIENT_NOT_FOUND_MSG, patientId)));
+
+        return appointmentRepository.findByPatientId(patient);
+    }
+
+    public AppointmentDTO findById(Long id) {
+        return appointmentRepository.findByIdOrderById(id).orElseThrow(() ->
+                new ResourceNotFoundException(String.format(APPOINTMENT_NOT_FOUND_MSG, id)));
+    }
+
+    public List<AppointmentDTO> findByPatientId(Long patientId) {
+        Patient patient = patientRepository.findById(patientId).orElseThrow(() ->
+                new ResourceNotFoundException(String.format(PATIENT_NOT_FOUND_MSG, patientId)));
+
+        return appointmentRepository.findByPatientId(patient);
+    }
+
     public List<AppointmentDTO> findAll() {
         return appointmentRepository.findAllBy();
     }
