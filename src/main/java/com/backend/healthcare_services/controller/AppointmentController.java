@@ -15,6 +15,7 @@ import javax.ws.rs.core.MediaType;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @AllArgsConstructor
@@ -44,6 +45,14 @@ public class AppointmentController {
         return new ResponseEntity<>(appointment, HttpStatus.OK);
     }
 
+    @GetMapping("/all/appointmentsOfUser")
+    @PreAuthorize("hasRole('PATIENT')")
+    public ResponseEntity<Set<List<AppointmentDTO>>> getAppointmentsByUserId(HttpServletRequest request){
+        Long userId = (Long) request.getAttribute("id");
+        Set<List<AppointmentDTO>> appointment = appointmentService.findByUserId(userId);
+        return new ResponseEntity<>(appointment, HttpStatus.OK);
+    }
+
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN') or hasRole('SECRETARY') or hasRole('NURSE') or hasRole('DOCTOR')")
     public ResponseEntity<AppointmentDTO> getAppointmentByIdAuth(@PathVariable Long id){
@@ -55,6 +64,13 @@ public class AppointmentController {
     @PreAuthorize("hasRole('ADMIN') or hasRole('SECRETARY') or hasRole('NURSE') or hasRole('DOCTOR')")
     public ResponseEntity<List<AppointmentDTO>> getAppointmentsByPatientIdAuth(@PathVariable Long patientId){
         List<AppointmentDTO> appointment = appointmentService.findByPatientId(patientId);
+        return new ResponseEntity<>(appointment, HttpStatus.OK);
+    }
+
+    @GetMapping("/all/{userId}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SECRETARY') or hasRole('NURSE') or hasRole('DOCTOR')")
+    public ResponseEntity<Set<List<AppointmentDTO>>> getAppointmentsByUserIdAuth(@PathVariable Long userId){
+        Set<List<AppointmentDTO>> appointment = appointmentService.findByUserId(userId);
         return new ResponseEntity<>(appointment, HttpStatus.OK);
     }
 

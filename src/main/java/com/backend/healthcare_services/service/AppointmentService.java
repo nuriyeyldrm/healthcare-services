@@ -9,8 +9,9 @@ import com.backend.healthcare_services.repository.*;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @AllArgsConstructor
 @Service
@@ -45,6 +46,22 @@ public class AppointmentService {
                 new ResourceNotFoundException(String.format(PATIENT_NOT_FOUND_MSG, patientId)));
 
         return appointmentRepository.findByPatientId(patient);
+    }
+
+    public Set<List<AppointmentDTO>> findByUserId(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() ->
+                new ResourceNotFoundException(String.format(USER_NOT_FOUND_MSG, userId)));
+
+        List<Patient> patients = patientRepository.findByUserId(user);
+
+        Set<List<AppointmentDTO>> appointments = new HashSet<>();
+
+        for (Patient patient : patients) {
+            if (appointmentRepository.findByPatientId(patient) != null)
+                appointments.add(appointmentRepository.findByPatientId(patient));
+        }
+
+        return appointments;
     }
 
     public AppointmentDTO findById(Long id) {
