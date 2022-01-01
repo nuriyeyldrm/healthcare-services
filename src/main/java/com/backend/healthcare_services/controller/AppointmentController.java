@@ -95,9 +95,26 @@ public class AppointmentController {
         Double appointmentFee = appointmentService.price(doctorId);
 
         Map<String, Object> map = new HashMap<>();
-        map.put("appointment appointment created successfully", true);
+        map.put("appointment created successfully", true);
         map.put("appointmentFee", appointmentFee);
         return new ResponseEntity<>(map, HttpStatus.CREATED);
+    }
+
+    @PutMapping("/update")
+    @PreAuthorize("hasRole('PATIENT')")
+    public ResponseEntity<Map<String, Object>> updateAppointment(HttpServletRequest request,
+                                                                 @RequestParam("appointmentId") Long id,
+                                                                 @RequestParam("doctorId") Doctor doctorId,
+                                                                 @RequestParam("patientId") Long patientId,
+                                                                 @Valid @RequestBody AppointmentDTO appointment) {
+        Long userId = (Long) request.getAttribute("id");
+        appointmentService.updateAppointment(id, userId, doctorId, patientId, appointment);
+        Double appointmentFee = appointmentService.price(doctorId);
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("appointment updated successfully", true);
+        map.put("appointmentFee", appointmentFee);
+        return new ResponseEntity<>(map, HttpStatus.OK);
     }
 
     @GetMapping("/availability")

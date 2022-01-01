@@ -19,9 +19,11 @@ import java.util.Optional;
 @Repository
 public interface AppointmentRepository extends JpaRepository<Appointment, Long> {
 
-    Optional<AppointmentDTO> findByIdAndPatientId(Long id, Patient patientId) throws ResourceNotFoundException;
+    Optional<AppointmentDTO> findByIdAndPatientIdOrderById(Long id, Patient patientId) throws ResourceNotFoundException;
 
     Optional<AppointmentDTO> findByIdOrderById(Long id) throws ResourceNotFoundException;
+
+    Optional<Appointment> findByIdAndPatientId(Long id, Patient patient) throws ResourceNotFoundException;
 
     List<AppointmentDTO> findByPatientId(Patient patientId);
 
