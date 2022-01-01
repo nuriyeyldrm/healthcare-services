@@ -86,15 +86,17 @@ public class AppointmentController {
 
     @PostMapping("/add")
     @PreAuthorize("hasRole('PATIENT')")
-    public ResponseEntity<Map<String, Boolean>> addAppointment(HttpServletRequest request,
+    public ResponseEntity<Map<String, Object>> addAppointment(HttpServletRequest request,
                                                           @RequestParam("doctorId") Doctor doctorId,
                                                           @RequestParam("patientId") Long patientId,
                                                           @Valid @RequestBody AppointmentDTO appointment) {
         Long userId = (Long) request.getAttribute("id");
         appointmentService.addAppointment(userId, doctorId, patientId, appointment);
+        Double appointmentFee = appointmentService.price(doctorId);
 
-        Map<String, Boolean> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>();
         map.put("appointment appointment created successfully", true);
+        map.put("appointmentFee", appointmentFee);
         return new ResponseEntity<>(map, HttpStatus.CREATED);
     }
 
@@ -111,7 +113,7 @@ public class AppointmentController {
                     LocalDateTime appointmentEndTime ){
 
         boolean availability = appointmentService.reservationAvailability(doctorId, appointmentTime, appointmentEndTime);
-        Double appointmentFee = appointmentService.price(appointmentTime, appointmentEndTime, doctorId);
+        Double appointmentFee = appointmentService.price(doctorId);
 
         Map<String, Object> map = new HashMap<>();
         map.put("isAvailable", !availability);

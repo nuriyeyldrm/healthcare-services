@@ -118,7 +118,7 @@ public class AppointmentService {
         return checkStatus.size() > 0;
     }
 
-    public Double price(LocalDateTime appointmentTime, LocalDateTime appointmentEndTime, Doctor doctorId) {
+    public Double price(Doctor doctorId) {
         Optional<Doctor> doctor = doctorRepository.findById(doctorId.getId());
 
         return doctor.get().getAppointmentFee();
