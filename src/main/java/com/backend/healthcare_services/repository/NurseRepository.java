@@ -1,5 +1,6 @@
 package com.backend.healthcare_services.repository;
 
+import com.backend.healthcare_services.domain.Department;
 import com.backend.healthcare_services.domain.Nurse;
 import com.backend.healthcare_services.domain.User;
 import com.backend.healthcare_services.dto.NurseDTO;
@@ -20,6 +21,8 @@ public interface NurseRepository extends JpaRepository<Nurse, Long> {
     Optional<Nurse> findByUserId(User userId) throws ResourceNotFoundException;
 
     Optional<NurseDTO> findByIdOrderById(Long id) throws ResourceNotFoundException;
+
+    List<NurseDTO> findByDepartment(Department department);
 
     List<NurseDTO> findAllBy();
 }

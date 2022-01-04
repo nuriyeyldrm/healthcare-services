@@ -1,5 +1,6 @@
 package com.backend.healthcare_services.repository;
 
+import com.backend.healthcare_services.domain.Department;
 import com.backend.healthcare_services.domain.Secretary;
 import com.backend.healthcare_services.domain.User;
 import com.backend.healthcare_services.dto.SecretaryDTO;
@@ -20,6 +21,8 @@ public interface SecretaryRepository extends JpaRepository<Secretary, Long> {
     Optional<Secretary> findByUserId(User userId) throws ResourceNotFoundException;
 
     Optional<SecretaryDTO> findByIdOrderById(Long id);
+
+    List<SecretaryDTO> findByDepartment(Department department);
 
     List<SecretaryDTO> findAllBy();
 }
